@@ -20,7 +20,10 @@ class Coinsnap_Paywall_CoinsnapHandler {
 			'currency'              => $currency,
 			'redirectUrl'           => $redirectUrl,
 			'redirectAutomatically' => true,
-                        'referralCode' => COINSNAP_PAYWALL_REFERRAL_CODE
+			'referralCode'          => COINSNAP_PAYWALL_REFERRAL_CODE,
+			'metadata'              => [
+				'type' => 'Coinsnap Paywall',
+			]
 		] );
 
 		$response = wp_remote_post( "{$this->url}/api/v1/stores/" . $this->store_id . "/invoices", [
@@ -36,8 +39,8 @@ class Coinsnap_Paywall_CoinsnapHandler {
 
 		// Enhanced error handling
 		if ( is_wp_error( $response ) ) {
-                    //  Debug Invoice creation
-                    //error_log( 'Coinsnap Invoice Creation Error: ' . $response->get_error_message() );
+			//  Debug Invoice creation
+			//error_log( 'Coinsnap Invoice Creation Error: ' . $response->get_error_message() );
 
 			return [
 				'success' => false,
@@ -50,8 +53,8 @@ class Coinsnap_Paywall_CoinsnapHandler {
 
 		// Check HTTP status code
 		if ( $response_code !== 200 ) {
-                    //  Debug Invoice Creation HTTP
-                    //error_log( 'Coinsnap Invoice Creation HTTP Error: ' . $response_code . ' - ' . $body );
+			//  Debug Invoice Creation HTTP
+			//error_log( 'Coinsnap Invoice Creation HTTP Error: ' . $response_code . ' - ' . $body );
 
 			return [
 				'success' => false,
@@ -63,8 +66,8 @@ class Coinsnap_Paywall_CoinsnapHandler {
 		$decoded_body = json_decode( $body, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-                    //  Debug Invoice Creation JSON
-                    //error_log( 'BTCPay Invoice Creation JSON Decode Error: ' . json_last_error_msg() );
+			//  Debug Invoice Creation JSON
+			//error_log( 'BTCPay Invoice Creation JSON Decode Error: ' . json_last_error_msg() );
 
 			return [
 				'success'  => false,
@@ -84,7 +87,7 @@ class Coinsnap_Paywall_CoinsnapHandler {
 
 		// Set the request headers
 		$headers = [
-			'X-api-key'    => $this->api_key
+			'X-api-key' => $this->api_key
 		];
 
 		// Make the GET request to BTCPay API
