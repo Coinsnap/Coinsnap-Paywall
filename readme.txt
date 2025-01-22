@@ -1,14 +1,14 @@
-=== Coinsnap Bitcoin Paywall ===
+=== Coinsnap Paywall ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
 Requires at least: 6.2
-Tested up to: 6.7.1
+Tested up to: 6.7
 Requires PHP: 8.0
 Stable tag: 1.0.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The Coinsnap Bitcoin Paywall plugin allows you to implement Paywall and accept Bitcoin Lightning payments for your restricted content.
+The Coinsnap Paywall plugin allows you to implement Paywall and accept Bitcoin Lightning payments for your restricted content.
 
 == Description ==
 
@@ -19,7 +19,7 @@ It allows you to build up a sustainable source of income and be less dependent o
 * Coinsnap Bitcoin Paywall Demo Site: https://btcpaywall.com/en/
 * Blog Article: https://coinsnap.io/en/coinsnap-for-btcpaywall-payment-plugin/
 * WordPress: https://wordpress.org/plugins/coinsnap-bitcoin-paywall/
-* GitHub: https://github.com/Coinsnap/Bitcoin-Paywall
+* GitHub: https://github.com/Coinsnap/Coinsnap-Paywall
 
 == Bitcoin and Lightning payments in Coinsnap Bitcoin Paywall ==
 

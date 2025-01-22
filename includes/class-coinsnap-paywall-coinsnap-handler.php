@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Coinsnap_Bitcoin_Paywall_CoinsnapHandler {
+class Coinsnap_Paywall_CoinsnapHandler {
 	private $store_id;
 	private $api_key;
 	private $url;
@@ -115,7 +115,8 @@ class Coinsnap_Bitcoin_Paywall_CoinsnapHandler {
 		try {
 			$response = wp_remote_get( "{$this->url}/api/v1/stores/" . $this->store_id, [
 				'headers' => [
-					'X-api-key'    => $this->api_key,
+					'x-api-key'    => $this->api_key,
+					'Content-Type' => 'application/json',
 				],
 			] );
 
@@ -123,7 +124,7 @@ class Coinsnap_Bitcoin_Paywall_CoinsnapHandler {
 			if ( is_wp_error( $response ) ) {
 				return [
 					'success' => false,
-					'message' => 'Connection failed: ' . $response->get_error_message()
+					'message' => 'Connection to the Coinsnap failed: ' . $response->get_error_message()
 				];
 			}
 
@@ -132,14 +133,14 @@ class Coinsnap_Bitcoin_Paywall_CoinsnapHandler {
 			if ( $response_code !== 200 ) {
 				return [
 					'success' => false,
-					'message' => "Connection failed. HTTP Error: {$response_code}"
+					'message' => "Connection to the Coinsnap failed. HTTP Error: {$response_code}"
 				];
 			}
 
 			// If we get here, connection is successful
 			return [
 				'success' => true,
-				'message' => 'Connection to Coinsnap successful!'
+				'message' => 'Connection to the Coinsnap is successful!'
 			];
 
 		} catch ( Exception $e ) {

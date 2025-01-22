@@ -3,40 +3,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Coinsnap_Bitcoin_Paywall_Settings {
+class Coinsnap_Paywall_Settings {
 	private $shortcode_class;
 
 	public function __construct() {
 		// Register menus
 		add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
-	  add_action( 'update_option_coinsnap_bitcoin_paywall_options', [ $this, 'test_connection_on_save' ], 10, 2 );
-	  add_action( 'admin_notices', [ $this, 'display_connection_test_notice' ] );
+		add_action( 'update_option_coinsnap_paywall_options', [ $this, 'test_connection_on_save' ], 10, 2 );
+		add_action( 'admin_notices', [ $this, 'display_connection_test_notice' ] );
 
 		// Instantiate the shortcode class
-		$this->shortcode_class = new Coinsnap_Bitcoin_Paywall_Shortcode();
+		$this->shortcode_class = new Coinsnap_Paywall_Shortcode();
 	}
 
 	public function register_settings() {
-		register_setting( 'coinsnap_bitcoin_paywall', 'coinsnap_bitcoin_paywall_options', [
+		register_setting( 'coinsnap_paywall', 'coinsnap_paywall_options', [
 			'type'              => 'array',
 			'sanitize_callback' => [ $this, 'sanitize_options' ]
 		] );
 
 		// Provider Section
 		add_settings_section(
-			'coinsnap_bitcoin_paywall_provider_section',
+			'coinsnap_paywall_provider_section',
 			'Provider Settings',
 			[ $this, 'provider_section_callback' ],
-			'coinsnap_bitcoin_paywall'
+			'coinsnap_paywall'
 		);
 
 		add_settings_field(
 			'provider',
 			'Payment Provider',
 			[ $this, 'render_field' ],
-			'coinsnap_bitcoin_paywall',
-			'coinsnap_bitcoin_paywall_provider_section',
+			'coinsnap_paywall',
+			'coinsnap_paywall_provider_section',
 			[
 				'label_for' => 'provider',
 				'type'      => 'select',
@@ -49,18 +49,18 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 
 		// Coinsnap Section
 		add_settings_section(
-			'coinsnap_bitcoin_paywall_coinsnap_section',
+			'coinsnap_paywall_coinsnap_section',
 			'Coinsnap Settings',
 			[ $this, 'coinsnap_section_callback' ],
-			'coinsnap_bitcoin_paywall'
+			'coinsnap_paywall'
 		);
 
 		add_settings_field(
 			'coinsnap_store_id',
 			'Coinsnap Store ID',
 			[ $this, 'render_field' ],
-			'coinsnap_bitcoin_paywall',
-			'coinsnap_bitcoin_paywall_coinsnap_section',
+			'coinsnap_paywall',
+			'coinsnap_paywall_coinsnap_section',
 			[
 				'label_for' => 'coinsnap_store_id',
 				'type'      => 'text'
@@ -71,8 +71,8 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 			'coinsnap_api_key',
 			'Coinsnap API Key',
 			[ $this, 'render_field' ],
-			'coinsnap_bitcoin_paywall',
-			'coinsnap_bitcoin_paywall_coinsnap_section',
+			'coinsnap_paywall',
+			'coinsnap_paywall_coinsnap_section',
 			[
 				'label_for' => 'coinsnap_api_key',
 				'type'      => 'text'
@@ -81,18 +81,18 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 
 		// BTCPay Section
 		add_settings_section(
-			'coinsnap_bitcoin_paywall_btcpay_section',
+			'coinsnap_paywall_btcpay_section',
 			'BTCPay Settings',
 			[ $this, 'btcpay_section_callback' ],
-			'coinsnap_bitcoin_paywall'
+			'coinsnap_paywall'
 		);
 
 		add_settings_field(
 			'btcpay_store_id',
 			'BTCPay Store ID',
 			[ $this, 'render_field' ],
-			'coinsnap_bitcoin_paywall',
-			'coinsnap_bitcoin_paywall_btcpay_section',
+			'coinsnap_paywall',
+			'coinsnap_paywall_btcpay_section',
 			[
 				'label_for' => 'btcpay_store_id',
 				'type'      => 'text'
@@ -103,8 +103,8 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 			'btcpay_api_key',
 			'BTCPay API Key',
 			[ $this, 'render_field' ],
-			'coinsnap_bitcoin_paywall',
-			'coinsnap_bitcoin_paywall_btcpay_section',
+			'coinsnap_paywall',
+			'coinsnap_paywall_btcpay_section',
 			[
 				'label_for' => 'btcpay_api_key',
 				'type'      => 'text'
@@ -116,7 +116,7 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 			'BTCPay URL', [
 			$this,
 			'render_field'
-		], 'coinsnap_bitcoin_paywall', 'coinsnap_bitcoin_paywall_btcpay_section', [
+		], 'coinsnap_paywall', 'coinsnap_paywall_btcpay_section', [
 				'label_for' => 'btcpay_url',
 				'type'      => 'text'
 			]
@@ -124,7 +124,7 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 	}
 
 	public function render_field( $args ) {
-		$options     = get_option( 'coinsnap_bitcoin_paywall_options', [] );
+		$options     = get_option( 'coinsnap_paywall_options', [] );
 		$field_id    = $args['label_for'];
 		$field_type  = $args['type'];
 		$field_value = isset( $options[ $field_id ] ) ? $options[ $field_id ] : '';
@@ -133,7 +133,7 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 			case 'select':
 				echo '<select 
                 id="' . esc_attr( $field_id ) . '" 
-                name="coinsnap_bitcoin_paywall_options[' . esc_attr( $field_id ) . ']"
+                name="coinsnap_paywall_options[' . esc_attr( $field_id ) . ']"
                 class="regular-text">';
 				foreach ( $args['options'] as $value => $label ) {
 					echo '<option value="' . esc_attr( $value ) . '"' .
@@ -146,7 +146,7 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 			case 'text':
 				echo '<input type="text" 
                 id="' . esc_attr( $field_id ) . '" 
-                name="coinsnap_bitcoin_paywall_options[' . esc_attr( $field_id ) . ']" 
+                name="coinsnap_paywall_options[' . esc_attr( $field_id ) . ']" 
                 value="' . esc_attr( $field_value ) . '" 
                 class="regular-text"' .
 				     ( isset( $args['readonly'] ) && $args['readonly'] ? ' readonly' : '' ) .
@@ -196,24 +196,24 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 
 	// Optional section callbacks for additional descriptions
 	public function provider_section_callback() {
-		echo esc_html_e( 'Select your preferred payment provider and configure its settings below.', 'coinsnap-bitcoin-paywall' );
+		echo esc_html_e( 'Select your preferred payment provider and configure its settings below.', 'coinsnap-paywall' );
 	}
 
 	public function coinsnap_section_callback() {
-		echo esc_html_e( 'Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'coinsnap-bitcoin-paywall' );
+		echo esc_html_e( 'Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'coinsnap-paywall' );
 	}
 
 	public function btcpay_section_callback() {
-		echo esc_html_e( 'Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'coinsnap-bitcoin-paywall' );
+		echo esc_html_e( 'Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'coinsnap-paywall' );
 	}
 
 	public function add_menu_page() {
-		// Add a top-level menu page for Coinsnap Bitcoin Paywall
+		// Add a top-level menu page for Coinsnap Paywall
 		add_menu_page(
-			'Coinsnap Bitcoin Paywall',
-			'Coinsnap Bitcoin Paywall',
+			'Coinsnap Paywall',
+			'Coinsnap Paywall',
 			'manage_options',
-			'coinsnap_bitcoin_paywall',
+			'coinsnap_paywall',
 			[ $this, 'settings_page_html' ],
 			'dashicons-lock',
 			100
@@ -221,7 +221,7 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 
 		// Add the Paywall Shortcodes submenu
 		add_submenu_page(
-			'coinsnap_bitcoin_paywall', // Parent slug
+			'coinsnap_paywall', // Parent slug
 			'Paywall Shortcodes', // Page title
 			'Paywall Shortcodes', // Menu title
 			'manage_options', // Capability
@@ -237,11 +237,11 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 	private function render_section( $section_id ) {
 		global $wp_settings_sections, $wp_settings_fields;
 
-		if ( ! isset( $wp_settings_sections['coinsnap_bitcoin_paywall'][ $section_id ] ) ) {
+		if ( ! isset( $wp_settings_sections['coinsnap_paywall'][ $section_id ] ) ) {
 			return;
 		}
 
-		$section = $wp_settings_sections['coinsnap_bitcoin_paywall'][ $section_id ];
+		$section = $wp_settings_sections['coinsnap_paywall'][ $section_id ];
 
 		if ( ! empty( $section['title'] ) ) {
 			echo '<h3>' . esc_html( $section['title'] ) . '</h3>';
@@ -251,9 +251,9 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 			call_user_func( $section['callback'], $section );
 		}
 
-		if ( ! empty( $wp_settings_fields['coinsnap_bitcoin_paywall'][ $section_id ] ) ) {
+		if ( ! empty( $wp_settings_fields['coinsnap_paywall'][ $section_id ] ) ) {
 			echo '<table class="form-table">';
-			do_settings_fields( 'coinsnap_bitcoin_paywall', $section_id );
+			do_settings_fields( 'coinsnap_paywall', $section_id );
 			echo '</table>';
 		}
 	}
@@ -261,24 +261,23 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 	public function settings_page_html() {
 		?>
       <div class="wrap">
-        <h1><?php esc_html_e( 'Coinsnap Bitcoin Paywall Settings', 'coinsnap-bitcoin-paywall' ); ?></h1>
-
+        <h1><?php esc_html_e( 'Coinsnap Paywall Settings', 'coinsnap-paywall' ); ?></h1>
         <form method="post" action="options.php">
 			<?php
-			// Render settings fields
-			settings_fields( 'coinsnap_bitcoin_paywall' );
+			// Render the settings fields for the Coinsnap Paywall
+			settings_fields( 'coinsnap_paywall' );
 
-			// Render sections
-			$this->render_section( 'coinsnap_bitcoin_paywall_provider_section' );
+			// Render the Provider Settings Section
+			$this->render_section( 'coinsnap_paywall_provider_section' );
 
-			// Render Coinsnap settings
+			// Render Coinsnap Settings inside a wrapper
 			echo '<div id="coinsnap-settings-wrapper" class="provider-settings">';
-			$this->render_section( 'coinsnap_bitcoin_paywall_coinsnap_section' );
+			$this->render_section( 'coinsnap_paywall_coinsnap_section' );
 			echo '</div>';
 
-			// Render BTCPay settings
+			// Render BTCPay Settings inside a wrapper
 			echo '<div id="btcpay-settings-wrapper" class="provider-settings">';
-			$this->render_section( 'coinsnap_bitcoin_paywall_btcpay_section' );
+			$this->render_section( 'coinsnap_paywall_btcpay_section' );
 			echo '</div>';
 
 			// Render submit button
@@ -292,12 +291,12 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 	public function display_connection_test_notice() {
 		// Only show on the plugin settings page
 		$screen = get_current_screen();
-		if ( $screen->id !== 'toplevel_page_coinsnap_bitcoin_paywall' ) {
+		if ( $screen->id !== 'toplevel_page_coinsnap_paywall' ) {
 			return;
 		}
 
 		// Retrieve the connection test result
-		$connection_result = get_option( 'coinsnap_bitcoin_paywall_connection_result' );
+		$connection_result = get_option( 'coinsnap_paywall_connection_result' );
 
 		if ( $connection_result ) {
 			$class = $connection_result['success'] ? 'notice-success' : 'notice-error';
@@ -309,9 +308,9 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 		}
 	}
 
-	public function test_connection_on_save( $old_options, $new_options ) {
+	public function test_connection_on_save( $new_options ) {
 		// Ensure we have a provider selected
-		if ( !isset( $new_options['provider'] ) ) {
+		if ( ! isset( $new_options['provider'] ) ) {
 			return;
 		}
 
@@ -328,11 +327,12 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 				// Ensure required Coinsnap credentials are present
 				if ( empty( $new_options['coinsnap_store_id'] ) || empty( $new_options['coinsnap_api_key'] ) ) {
 					$connection_result['message'] = __( 'Coinsnap Store ID or API Key is missing', 'coinsnap-bitcoin-paywall' );
-					update_option( 'coinsnap_bitcoin_paywall_connection_result', $connection_result );
+					update_option( 'coinsnap_paywall_connection_result', $connection_result );
+
 					return;
 				}
 
-				$handler = new Coinsnap_Bitcoin_Paywall_CoinsnapHandler(
+				$handler = new Coinsnap_Paywall_CoinsnapHandler(
 					$new_options['coinsnap_store_id'],
 					$new_options['coinsnap_api_key']
 				);
@@ -344,11 +344,12 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 					empty( $new_options['btcpay_url'] )
 				) {
 					$connection_result['message'] = __( 'BTCPay Store ID, API Key, or URL is missing', 'coinsnap-bitcoin-paywall' );
-					update_option( 'coinsnap_bitcoin_paywall_connection_result', $connection_result );
+					update_option( 'coinsnap_paywall_connection_result', $connection_result );
+
 					return;
 				}
 
-				$handler = new Coinsnap_Bitcoin_Paywall_BTCPayHandler(
+				$handler = new Coinsnap_Paywall_BTCPayHandler(
 					$new_options['btcpay_store_id'],
 					$new_options['btcpay_api_key'],
 					$new_options['btcpay_url']
@@ -367,8 +368,8 @@ class Coinsnap_Bitcoin_Paywall_Settings {
 		}
 
 		// Persist the connection result
-		update_option( 'coinsnap_bitcoin_paywall_connection_result', $connection_result );
+		update_option( 'coinsnap_paywall_connection_result', $connection_result );
 	}
 }
 
-new Coinsnap_Bitcoin_Paywall_Settings();
+new Coinsnap_Paywall_Settings();

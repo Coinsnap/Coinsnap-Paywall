@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Coinsnap_Bitcoin_Paywall_BTCPayHandler {
+class Coinsnap_Paywall_BTCPayHandler {
 	private $store_id;
 	private $api_key;
 	private $url;
@@ -125,7 +125,7 @@ class Coinsnap_Bitcoin_Paywall_BTCPayHandler {
 			if ( is_wp_error( $response ) ) {
 				return [
 					'success' => false,
-					'message' => 'Connection failed: ' . $response->get_error_message()
+					'message' => 'Connection to the BTCPay failed: ' . $response->get_error_message()
 				];
 			}
 
@@ -134,14 +134,14 @@ class Coinsnap_Bitcoin_Paywall_BTCPayHandler {
 			if ( $response_code !== 200 ) {
 				return [
 					'success' => false,
-					'message' => "Connection failed. HTTP Error: {$response_code}"
+					'message' => "Connection to the BTCPay failed. HTTP Error: {$response_code}"
 				];
 			}
 
 			// If we get here, connection is successful
 			return [
 				'success' => true,
-				'message' => 'Connection to BTCPay successful!'
+				'message' => 'Connection to the BTCPay successful!'
 			];
 
 		} catch ( Exception $e ) {

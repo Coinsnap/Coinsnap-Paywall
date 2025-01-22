@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Coinsnap_Bitcoin_Paywall_Admin {
+class Coinsnap_Paywall_Admin {
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'handle_connection_test' ] );
 		add_action( 'admin_notices', [ $this, 'display_connection_notice' ] );
@@ -17,17 +17,17 @@ class Coinsnap_Bitcoin_Paywall_Admin {
 			current_user_can( 'manage_options' )
 		) {
 			$provider = sanitize_text_field( $_GET['provider'] );
-			$options = get_option( 'coinsnap_bitcoin_paywall_options', [] );
+			$options = get_option( 'coinsnap_paywall_options', [] );
 
 			// Get the appropriate handler based on provider
 			$handler = null;
 			if ( $provider === 'coinsnap' ) {
-				$handler = new Coinsnap_Bitcoin_Paywall_CoinsnapHandler(
+				$handler = new Coinsnap_Paywall_CoinsnapHandler(
 					$options['coinsnap_store_id'] ?? '',
 					$options['coinsnap_api_key'] ?? ''
 				);
 			} elseif ( $provider === 'btcpay' ) {
-				$handler = new Coinsnap_Bitcoin_Paywall_BTCPayHandler(
+				$handler = new Coinsnap_Paywall_BTCPayHandler(
 					$options['btcpay_store_id'] ?? '',
 					$options['btcpay_api_key'] ?? '',
 					$options['btcpay_url'] ?? ''
@@ -43,7 +43,7 @@ class Coinsnap_Bitcoin_Paywall_Admin {
 			}
 
 			// Redirect back to settings page
-			wp_redirect( admin_url( 'admin.php?page=coinsnap_bitcoin_paywall' ) );
+			wp_redirect( admin_url( 'admin.php?page=coinsnap_paywall' ) );
 			exit;
 		}
 	}
@@ -70,4 +70,4 @@ class Coinsnap_Bitcoin_Paywall_Admin {
 }
 
 // Initialize the admin functionality
-new Coinsnap_Bitcoin_Paywall_Admin();
+new Coinsnap_Paywall_Admin();

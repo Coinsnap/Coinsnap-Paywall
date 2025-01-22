@@ -29,7 +29,7 @@ jQuery(document).ready(function ($) {
     }
 
     $.ajax({
-      url: coinsnap_bitcoin_paywall_ajax.ajax_url,
+      url: coinsnap_paywall_ajax.ajax_url,
       method: 'POST',
       data: {
         action: 'coinsnap_create_invoice',
@@ -57,7 +57,7 @@ jQuery(document).ready(function ($) {
   function checkInvoiceStatus(invoiceId, postId, duration, redirect) {
 
     $.ajax({
-      url: coinsnap_bitcoin_paywall_ajax.ajax_url,
+      url: coinsnap_paywall_ajax.ajax_url,
       method: 'POST',
       data: {
         action: 'check_invoice_status',
@@ -80,10 +80,10 @@ jQuery(document).ready(function ($) {
 
   function grantAccess(postId, duration) {
     $.ajax({
-      url: coinsnap_bitcoin_paywall_ajax.ajax_url,
+      url: coinsnap_paywall_ajax.ajax_url,
       method: 'POST',
       data: {
-        action: 'coinsnap_bitcoin_paywall_grant_access',
+        action: 'coinsnap_paywall_grant_access',
         post_id: postId,
         duration: duration,
       },
