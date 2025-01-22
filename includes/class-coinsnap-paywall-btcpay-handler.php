@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Coinsnap_Bitcoin_Paywall_BTCPayHandler {
+class Coinsnap_Paywall_BTCPayHandler {
 	private $store_id;
 	private $api_key;
 	private $url;

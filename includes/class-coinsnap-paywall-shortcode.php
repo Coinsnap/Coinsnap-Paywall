@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Coinsnap_Bitcoin_Paywall_Shortcode {
+class Coinsnap_Paywall_Shortcode {
 	public function __construct() {
 		add_shortcode( 'paywall_payment', [ $this, 'render_paywall_shortcode' ] );
 	}
@@ -23,12 +23,12 @@ class Coinsnap_Bitcoin_Paywall_Shortcode {
 		}
 
 		// Retrieve meta values
-		$description = get_post_meta($shortcode_post->ID, '_coinsnap_bitcoin_paywall_description', true);
-		$button_text = get_post_meta($shortcode_post->ID, '_coinsnap_bitcoin_paywall_button_text', true) ?: 'Pay Now';
-		$price = get_post_meta($shortcode_post->ID, '_coinsnap_bitcoin_paywall_price', true) ?: '0';
-		$currency = get_post_meta($shortcode_post->ID, '_coinsnap_bitcoin_paywall_currency', true) ?: 'SATS';
-		$duration = get_post_meta($shortcode_post->ID, '_coinsnap_bitcoin_paywall_duration', true) ?: '24';
-		$theme = get_post_meta($shortcode_post->ID, '_coinsnap_bitcoin_paywall_theme', true) ?: 'light';
+		$description = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_description', true);
+		$button_text = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_button_text', true) ?: 'Pay Now';
+		$price = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_price', true) ?: '0';
+		$currency = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_currency', true) ?: 'SATS';
+		$duration = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_duration', true) ?: '24';
+		$theme = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_theme', true) ?: 'light';
 
 		// Start output buffering
 		ob_start();
@@ -45,11 +45,13 @@ class Coinsnap_Bitcoin_Paywall_Shortcode {
         </div>
         <button class="paywall-payment-button"><?php echo esc_html($button_text); ?></button>
       </div>
-    <p class="restricted <?php echo esc_attr($theme); ?>"><?php echo esc_html_e('This content is restricted. Please complete payment to access.','coinsnap-bitcoin-paywall')?></p>
+    <p class="restricted <?php echo esc_attr($theme); ?>">
+        <?php echo esc_html_e('This content is restricted. Please complete payment to access.','coinsnap-paywall')?>
+    </p>
 
 		<?php
 		return ob_get_clean();
 	}
 }
 
-new Coinsnap_Bitcoin_Paywall_Shortcode();
+new Coinsnap_Paywall_Shortcode();
