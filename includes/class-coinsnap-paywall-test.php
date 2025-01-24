@@ -11,12 +11,10 @@ class Coinsnap_Paywall_Admin {
 
 	public function handle_connection_test() {
 		// Check if connection test is requested
-		if (
-			isset( $_GET['coinsnap_test_connection'] ) &&
-			isset( $_GET['provider'] ) &&
-			current_user_can( 'manage_options' )
-		) {
-			$provider = sanitize_text_field( $_GET['provider'] );
+		if (null !== filter_input(INPUT_GET,'coinsnap_test_connection',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) &&
+                    null !== filter_input(INPUT_GET,'provider',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) && current_user_can( 'manage_options' )) {
+			
+                        $provider = sanitize_text_field( filter_input(INPUT_GET,'provider',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
 			$options = get_option( 'coinsnap_paywall_options', [] );
 
 			// Get the appropriate handler based on provider
