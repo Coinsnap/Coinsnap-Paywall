@@ -4,11 +4,11 @@ Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
 Requires at least: 6.2
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The Coinsnap Paywall plugin allows you to implement Paywall and accept Bitcoin Lightning payments for your restricted content.
+Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
 
 == Description ==
 
@@ -169,8 +169,24 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 
 == Screenshots ==
 
+1. Coinsnap paywall plugin with plugin search installation
+2. Coinsnap Paywall plugin from Github page installation
+3. Plugin installation via the “Upload Plugin” function
+4. Coinsnap account to Coinsnap Paywall connection
+5. BTCPay account to Coinsnap Paywall connection
+6. Paywall shortcode generation
+7. Paywall shortcode configuration
+8. Registration in Cooinsnap*
+9. Email address confirmation
+10. Setting up website at Coinsnap
+11. Payment via BTCPay server
+12. QR code
+
  
 # Changelog #
 
 = 1.0.0 :: 2024-07-08 =
 * Initial release. 
+
+= 1.1.0 :: 2025-01-23 =
+* Gateway connection check is added
