@@ -22,7 +22,7 @@ It allows you to build up a sustainable source of income and be less dependent o
 
 * Coinsnap Bitcoin Paywall Demo Site: [https://btcpaywall.com/en/](https://btcpaywall.com/en/)
 * Blog Article: [https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/](https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/)
-* WordPress: [https://wordpress.org/plugins/coinsnap-bitcoin-paywall/](https://wordpress.org/plugins/coinsnap-bitcoin-paywall/)
+* WordPress: [https://wordpress.org/plugins/coinsnap-paywall/](https://wordpress.org/plugins/coinsnap-paywall/)
 * GitHub: [https://github.com/Coinsnap/Coinsnap-Paywall](https://github.com/Coinsnap/Coinsnap-Paywall)
 
 ## Bitcoin and Lightning payments in Coinsnap Paywall ##
