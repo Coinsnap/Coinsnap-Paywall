@@ -316,7 +316,7 @@ class Coinsnap_Paywall_Settings {
 
 		$connection_result = [
 			'success' => false,
-			'message' => __( 'Connection test failed', 'coinsnap-bitcoin-paywall' )
+			'message' => __( 'Connection test failed', 'coinsnap-paywall' )
 		];
 
 		try {
@@ -326,7 +326,7 @@ class Coinsnap_Paywall_Settings {
 			if ( $new_options['provider'] === 'coinsnap' ) {
 				// Ensure required Coinsnap credentials are present
 				if ( empty( $new_options['coinsnap_store_id'] ) || empty( $new_options['coinsnap_api_key'] ) ) {
-					$connection_result['message'] = __( 'Coinsnap Store ID or API Key is missing', 'coinsnap-bitcoin-paywall' );
+					$connection_result['message'] = __( 'Coinsnap Store ID or API Key is missing', 'coinsnap-paywall' );
 					update_option( 'coinsnap_paywall_connection_result', $connection_result );
 
 					return;
@@ -343,7 +343,7 @@ class Coinsnap_Paywall_Settings {
 					empty( $new_options['btcpay_api_key'] ) ||
 					empty( $new_options['btcpay_url'] )
 				) {
-					$connection_result['message'] = __( 'BTCPay Store ID, API Key, or URL is missing', 'coinsnap-bitcoin-paywall' );
+					$connection_result['message'] = __( 'BTCPay Store ID, API Key, or URL is missing', 'coinsnap-paywall' );
 					update_option( 'coinsnap_paywall_connection_result', $connection_result );
 
 					return;
@@ -362,7 +362,8 @@ class Coinsnap_Paywall_Settings {
 			}
 		} catch ( Exception $e ) {
 			$connection_result['message'] = sprintf(
-				__( 'Connection test error: %s', 'coinsnap-bitcoin-paywall' ),
+                                /* translators: 1: Connection test error */
+				__( 'Connection test error: %s', 'coinsnap-paywall' ),
 				$e->getMessage()
 			);
 		}
