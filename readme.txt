@@ -1,14 +1,12 @@
-=== Coinsnap Paywall ===
+=== Bitcoin Paywall for WordPress content ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
-Requires at least: 6.2
-Tested up to: 6.7
-Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
+Tested up to: 6.8
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The Coinsnap Paywall plugin allows you to implement Paywall and accept Bitcoin Lightning payments for your restricted content.
+Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet!
 
 == Description ==
 
@@ -16,10 +14,10 @@ The [Coinsnap](https://coinsnap.io/en/) Bitcoin Paywall protects your high-quali
 
 It allows you to build up a sustainable source of income and be less dependent on advertising revenue or sponsors. With your Coinsnap Bitcoin paywall, you can target loyal users who are willing to pay, which leads to a high-quality community in the long term.
 
-* Coinsnap Bitcoin Paywall Demo Site: https://btcpaywall.com/en/
-* Blog Article: https://coinsnap.io/en/coinsnap-for-btcpaywall-payment-plugin/
-* WordPress: https://wordpress.org/plugins/coinsnap-bitcoin-paywall/
-* GitHub: https://github.com/Coinsnap/Coinsnap-Paywall
+* Coinsnap Bitcoin Paywall Demo Site: [https://btcpaywall.com/en/](https://btcpaywall.com/en/)
+* Blog Article: [https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/](https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/)
+* WordPress: [https://wordpress.org/plugins/coinsnap-paywall/](https://wordpress.org/plugins/coinsnap-paywall/)
+* GitHub: [https://github.com/Coinsnap/Coinsnap-Paywall](https://github.com/Coinsnap/Coinsnap-Paywall)
 
 == Bitcoin and Lightning payments in Coinsnap Bitcoin Paywall ==
 
@@ -169,8 +167,25 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 
 == Screenshots ==
 
+1. Coinsnap paywall plugin with plugin search installation
+2. Coinsnap Paywall plugin from Github page installation
+3. Plugin installation via the “Upload Plugin” function
+4. Coinsnap account to Coinsnap Paywall connection
+5. BTCPay account to Coinsnap Paywall connection
+6. Paywall shortcode generation
+7. Paywall shortcode configuration
+8. Registration in Cooinsnap*
+9. Email address confirmation
+10. Setting up website at Coinsnap
+11. Payment via BTCPay server
+12. QR code
+
  
 # Changelog #
 
 = 1.0.0 :: 2024-07-08 =
 * Initial release. 
+
+= 1.0.1 :: 2025-05-05 =
+* Compatibility with Wordpress 6.8.1 is tested.
+* Updated frontend interface 

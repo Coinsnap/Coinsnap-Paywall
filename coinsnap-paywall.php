@@ -1,14 +1,16 @@
 <?php
 /*
- * Plugin Name:        Coinsnap Paywall
- * Plugin URI:         https://coinsnap.io
- * Description:        A plugin for Paywall using Coinsnap and BTCPay.
- * Version:            1.0.0
+ * Plugin Name:        Bitcoin Paywall for WordPress content
+ * Plugin URI:         https://coinsnap.io/coinsnap-bitcoin-paywall/
+ * Description:        Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet!
+ * Version:            1.0.1
  * Author:             Coinsnap
  * Author URI:         https://coinsnap.io/
  * Text Domain:        coinsnap-paywall
  * Domain Path:         /languages
- * Tested up to:        6.7
+ * Requires PHP:        8.0
+ * Tested up to:        6.8
+ * Requires at least:   6.2
  * License:             GPL2
  * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -20,7 +22,7 @@ if ( ! defined( 'COINSNAP_PAYWALL_REFERRAL_CODE' ) ) {
 	define( 'COINSNAP_PAYWALL_REFERRAL_CODE', 'D72896' );
 }
 if ( ! defined( 'COINSNAP_PAYWALL_VERSION' ) ) {
-	define( 'COINSNAP_PAYWALL_VERSION', '1.0.0' );
+	define( 'COINSNAP_PAYWALL_VERSION', '1.0.1' );
 }
 if ( ! defined( 'COINSNAP_PAYWALL_PHP_VERSION' ) ) {
 	define( 'COINSNAP_PAYWALL_PHP_VERSION', '8.0' );
@@ -29,13 +31,6 @@ if ( ! defined( 'COINSNAP_PAYWALL_PHP_VERSION' ) ) {
 register_activation_hook( __FILE__, "coinsnap_paywall_activate" );
 register_uninstall_hook( __FILE__, 'coinsnap_paywall_uninstall' );
 add_action( 'admin_init', 'coinsnap_paywall_php_version' );
-add_action( 'init', 'start_custom_session', 1 );
-
-function start_custom_session() {
-	if ( session_status() === PHP_SESSION_NONE ) {
-		session_start();
-	}
-}
 
 function coinsnap_paywall_php_notice() {
 	$versionMessage = sprintf(
@@ -88,24 +83,35 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-scri
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-shortcode.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-post-type.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-test.php';
 
 class CoinsnapPaywall {
 
-	public function __construct() {
+    public function __construct() {
 
-		// Register AJAX handlers for payment initiation
-		add_action( 'wp_ajax_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
-		add_action( 'wp_ajax_nopriv_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
+    // Register AJAX handlers for payment initiation
+        add_action( 'wp_ajax_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
+        add_action( 'wp_ajax_nopriv_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
 
-		// Restrict content
-		//add_action( 'init', [$this, 'start_custom_session'], 1 );
-		add_filter( 'the_content', [ $this, 'restrict_page_content' ] );
+    // Restrict content
+        //add_action( 'init', [$this, 'start_custom_session'], 1 );
+        add_filter( 'the_content', [ $this, 'restrict_page_content' ] );
 
-		add_action( 'wp_ajax_check_invoice_status', [ $this, 'check_invoice_status' ] );
-		add_action( 'wp_ajax_nopriv_check_invoice_status', [ $this, 'check_invoice_status' ] );
-		add_action( 'wp_ajax_coinsnap_paywall_grant_access', [ $this, 'coinsnap_paywall_grant_access' ] );
-		add_action( 'wp_ajax_nopriv_coinsnap_paywall_grant_access', [ $this, 'coinsnap_paywall_grant_access' ] );
+        add_action( 'wp_ajax_check_invoice_status', [ $this, 'check_invoice_status' ] );
+        add_action( 'wp_ajax_nopriv_check_invoice_status', [ $this, 'check_invoice_status' ] );
+        add_action( 'wp_ajax_coinsnap_paywall_grant_access', [$this,'coinsnap_paywall_grant_access'] );
+        add_action( 'wp_ajax_nopriv_coinsnap_paywall_grant_access', [$this,'coinsnap_paywall_grant_access'] );
+    }
+
+	public function start_custom_session() {
+		if ( session_status() === PHP_SESSION_NONE ) {
+			session_start();
+		}
+                
+                // Ensure the session ID is set
+		if ( empty( session_id() ) ) {
+			// Optionally, generate a unique session ID or trigger an error if needed
+			session_regenerate_id();
+		}
 	}
 
 	public function check_invoice_status() {
@@ -147,7 +153,7 @@ class CoinsnapPaywall {
 		$handler = $this->get_provider_handler( $provider );
 
 		if ( ! $handler ) {
-			wp_send_json_error( [ 'message' => 'Invalid provider' ] );
+                    wp_send_json_error( [ 'message' => 'Invalid provider' ] );
 		}
 
 		$invoice = $handler->createInvoice( $price, $currency, $redirectUrl );
@@ -165,6 +171,7 @@ class CoinsnapPaywall {
 			wp_send_json_success( [ 'invoice_url' => $invoice['data']['checkoutLink'] ] );
 		} else {
 			// Debug Invoice creation
+                        //error_log( 'Invoice creation failed: ' . print_r( $invoice, true ) );
 			wp_send_json_error( [ 'message' => 'Failed to create invoice' . $invoice["body"] ] );
 		}
 	}
@@ -202,17 +209,20 @@ class CoinsnapPaywall {
 
 		$access = $wpdb->get_row( $wpdb->prepare(
 			"SELECT * FROM %i WHERE post_id = %d AND session_id = %s AND access_expires > NOW()",
-			$table_name, $post_id, $session_id )
-		);
+			$table_name, $post_id, $session_id)
+                );
 
 		return $access !== null;
 	}
 
 	public function coinsnap_paywall_grant_access() {
+	
+            $this->start_custom_session();
+            
 		// Get and use the session ID
 		$session_id = session_id();
-
-		// Debug incoming data
+		
+                // Debug incoming data
 		//error_log( print_r( $_POST, true ) );
 
 		if ( empty( filter_input( INPUT_POST, 'post_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ) || empty( filter_input( INPUT_POST, 'duration', FILTER_VALIDATE_INT ) ) ) {
@@ -242,8 +252,8 @@ class CoinsnapPaywall {
 
 		// Debug query execution
 		if ( $result === false ) {
-			//  Debug Database Error
-			//error_log( 'Database Error: ' . $wpdb->last_error );
+                    //  Debug Database Error
+                    //error_log( 'Database Error: ' . $wpdb->last_error );
 			wp_send_json_error( 'Database insertion failed' );
 		}
 
@@ -252,39 +262,39 @@ class CoinsnapPaywall {
 
 	public function restrict_page_content( $content ) {
 		// Start the session if it hasn't been started already
-
+            $this->start_custom_session();
+            /*
 		// Ensure the session ID is set
 		if ( empty( session_id() ) ) {
 			// Optionally, generate a unique session ID or trigger an error if needed
 			session_regenerate_id();
 		}
-
+            */
 		$session_id = session_id();
 		$post_id    = get_the_ID();
 
 		// Check if the condition is met (user has access)
 		$has_access = $this->coinsnap_paywall_has_access( $post_id, $session_id );
 
-		return $this->process_native_content( $content, $has_access );
+	  return $this->process_native_content( $content, $has_access );
 	}
 
-	private function process_native_content( $content, $has_access ) {
-		if ( strpos( $content, '[paywall_payment' ) !== false ) {
-			if ( $has_access ) {
-				$content = preg_replace( '/\[paywall_payment[^\]]*\]/', '', $content );
 
-				return $content;
-			} else {
-				// Restrict content and show paywall up to the shortcode
-				$parts           = explode( '[paywall_payment', $content );
-				$shortcode_parts = explode( ']', $parts[1], 2 );
-				$shortcode       = '[paywall_payment' . $shortcode_parts[0] . ']';
-
-				return $parts[0] . $shortcode;
-			}
+	private function process_native_content( $content, $has_access ){
+            if ( strpos( $content, '[paywall_payment' ) !== false ) {
+                if ( $has_access ) {
+                    $content = preg_replace( '/\[paywall_payment[^\]]*\]/', '', $content );
+                    return $content;
+                }
+                else {
+                    // Restrict content and show paywall up to the shortcode
+                    $parts = explode( '[paywall_payment', $content );
+                    $shortcode_parts = explode( ']', $parts[1], 2 );
+                    $shortcode = '[paywall_payment' . $shortcode_parts[0] . ']';
+                    return $parts[0] . $shortcode;
 		}
-
-		return $content; // Return as-is if no shortcode
+            }
+            return $content; // Return as-is if no shortcode
 	}
 }
 
