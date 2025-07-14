@@ -8,7 +8,7 @@
 * Requires at least: 5.2
 * Tested up to: 6.8
 * Requires PHP: 8.0
-* Stable tag: 1.0.1
+* Stable tag: 1.2.0
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,10 +20,10 @@ The [Coinsnap](https://coinsnap.io/en/) Coinsnap Paywall protects your high-qual
 
 It allows you to build up a sustainable source of income and be less dependent on advertising revenue or sponsors. With your Coinsnap Paywall, you can target loyal users who are willing to pay, which leads to a high-quality community in the long term.
 
-* Coinsnap Bitcoin Paywall Demo Site: [https://btcpaywall.com/en/](https://btcpaywall.com/en/)
-* Blog Article: [https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/](https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/)
-* WordPress: [https://wordpress.org/plugins/coinsnap-paywall/](https://wordpress.org/plugins/coinsnap-paywall/)
-* GitHub: [https://github.com/Coinsnap/Coinsnap-Paywall](https://github.com/Coinsnap/Coinsnap-Paywall)
+* Coinsnap Paywall Demo Site: https://btcpaywall.com/en/
+* Blog Article: https://coinsnap.io/en/coinsnap-for-btcpaywall-payment-plugin/
+* WordPress: https://wordpress.org/plugins/coinsnap-paywall/
+* GitHub: https://github.com/Coinsnap/Coinsnap-Paywall
 
 ## Bitcoin and Lightning payments in Coinsnap Paywall ##
 
@@ -96,20 +96,17 @@ The Coinsnap Paywall can be searched in the WordPress plugin directory.
 In your WordPress instance, go to the Plugins > Add New section.
 In the search you enter Coinsnap and get as a result the Coinsnap Paywall plugin displayed.
 
-![Installation of the Coinsnap Paywall plugin via Plugin search](https://resources.coinsnap.org/products/paywall/images/screenshot-1.png)
-
-
 1.2. Install the Coinsnap Paywall plug-in from Github page
 
 If you want to install the Coinsnap Paywall, you must first download it from the Coinsnap Github page here. Then look for the green button labeled “Code”.
 
-![Installation of the Coinsnap Paywall plugin from Github page](https://resources.coinsnap.org/products/paywall/images/screenshot-2.jpg)
+![Install the Coinsnap Paywall plug-in from Github page](https://resources.coinsnap.org/products/paywall/images/screenshot-2.jpg)
 
 Install it via the “Upload Plugin” function:
 
 Navigate to Plugins > Add New Plugin > Upload Plugin and select the zip-archive you’ve downloaded from Github.
 
-![Installation via the “Upload Plugin” function](https://resources.coinsnap.org/products/paywall/images/screenshot-3.png)
+![Install via the “Upload Plugin” function](https://resources.coinsnap.org/products/paywall/images/screenshot-3.png)
 
 When you click on it, the menu opens and Download ZIP appears.
 
@@ -134,7 +131,7 @@ If you don’t have a Coinsnap account yet, you can do so via the link shown: Co
 
 Switch the select box "Payment Provider" to BTCPay and enter your BTCPay Store ID, API key and Server URL.
 
-![Connect //0/0](https://resources.coinsnap.org/products/paywall/images/screenshot-5.png)
+![Connect BTCPay account with Coinsnap Paywall](https://resources.coinsnap.org/products/paywall/images/screenshot-5.png)
 
 Please note that all your Coinsnap Paywall payment widgets will connect to the active payment provider: Coinsnap or BTCPay.
 
@@ -210,7 +207,7 @@ If you want to place a paywall before the download of a video, create a short de
 
 5.2. Save your post or page and find paywall widget by its URL.
 
-### 6. Test payment ###
+### 6. Test payment
 
 Go to the test payment page by copied URL. Click on payment button and go to the payment page. 
 
@@ -222,11 +219,18 @@ Then you see the QR code. Hold your wallet above it and the amount of SATS displ
 
 ![QR code](https://resources.coinsnap.org/products/paywall/images/screenshot-12.png)
 
-# Changelog #
+## Changelog
 
-#### 1.0.0 :: 2024-07-08 ####
+#### 1.0.0 :: 2024-07-08
 * Initial release. 
 
-#### 1.0.1 :: 2025-05-05 ####
-* Compatibility with Wordpress 6.8.1 is tested.
-* Updated frontend interface
+#### 1.1.0 :: 2025-01-23
+* Update: Gateway connection check is added
+
+#### 1.2.0 :: 2025-07-14
+* Update: BTCPay and Coinsnap connection check is added on gateway change
+* Update: Added metadata field called type in the transaction
+* Update: Added support for Visual composer
+* Update: Added Coinsnap currencies support
+* Compatibility with Wordpress 6.8.1 is tested
+

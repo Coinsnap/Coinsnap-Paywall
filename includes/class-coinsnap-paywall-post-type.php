@@ -69,7 +69,7 @@ class Coinsnap_Paywall_Shortcode_Metabox {
 		$currency = get_post_meta($post->ID, '_coinsnap_paywall_currency', true);
 		$duration = get_post_meta($post->ID, '_coinsnap_paywall_duration', true);
 		$theme = get_post_meta($post->ID, '_coinsnap_paywall_theme', true);
-		?>
+                ?>
       <table class="form-table">
         <tr>
           <th scope="row">
@@ -119,13 +119,11 @@ class Coinsnap_Paywall_Shortcode_Metabox {
             <label for="coinsnap_paywall_currency"><?php echo esc_html_e('Currency','coinsnap-paywall')?></label>
           </th>
           <td>
-            <select
-                id="coinsnap_paywall_currency"
-                name="coinsnap_paywall_currency"
-            >
-              <option value="SATS" <?php selected($currency, 'SATS'); ?>>SATS</option>
-              <option value="EUR" <?php selected($currency, 'EUR'); ?>>EUR</option>
-              <option value="USD" <?php selected($currency, 'USD'); ?>>USD</option>
+            <select id="coinsnap_paywall_currency" name="coinsnap_paywall_currency"><?php
+            foreach(COINSNAP_CURRENCIES as $coinsnap_currency){?>
+                <option value="<?php echo esc_html($coinsnap_currency);?>" <?php selected($currency, $coinsnap_currency); ?>><?php echo esc_html($coinsnap_currency);?></option>
+                <?php
+                }?>
             </select>
           </td>
         </tr>
@@ -208,7 +206,7 @@ class Coinsnap_Paywall_Shortcode_Metabox {
 					'description' => sanitize_textarea_field($post_array_filtered[$field]),
 					'button_text' => sanitize_text_field($post_array_filtered[$field]),
 					'price'       => floatval($post_array_filtered[$field]),
-					'currency'    => in_array($post_array_filtered[$field], ['SATS', 'EUR', 'USD']) ? $post_array_filtered[$field] : 'SATS',
+					'currency'    => in_array($post_array_filtered[$field], COINSNAP_CURRENCIES) ? $post_array_filtered[$field] : 'SATS',
 					'duration'    => intval($post_array_filtered[$field]),
 					'theme'       => in_array($post_array_filtered[$field], ['light', 'dark']) ? $post_array_filtered[$field] : 'light',
 					default      => sanitize_text_field($post_array_filtered[$field])

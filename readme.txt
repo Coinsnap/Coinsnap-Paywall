@@ -1,12 +1,12 @@
-=== Bitcoin Paywall for WordPress content ===
+=== Coinsnap Paywall ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
-Stable tag: 1.0.1
 Tested up to: 6.8
+Stable tag: 1.2.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet!
+Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
 
 == Description ==
 
@@ -14,10 +14,10 @@ The [Coinsnap](https://coinsnap.io/en/) Bitcoin Paywall protects your high-quali
 
 It allows you to build up a sustainable source of income and be less dependent on advertising revenue or sponsors. With your Coinsnap Bitcoin paywall, you can target loyal users who are willing to pay, which leads to a high-quality community in the long term.
 
-* Coinsnap Bitcoin Paywall Demo Site: [https://btcpaywall.com/en/](https://btcpaywall.com/en/)
-* Blog Article: [https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/](https://coinsnap.io/coinsnap-for-btcpaywall-payment-plugin/)
-* WordPress: [https://wordpress.org/plugins/coinsnap-paywall/](https://wordpress.org/plugins/coinsnap-paywall/)
-* GitHub: [https://github.com/Coinsnap/Coinsnap-Paywall](https://github.com/Coinsnap/Coinsnap-Paywall)
+* Coinsnap Bitcoin Paywall Demo Site: https://btcpaywall.com/en/
+* Blog Article: https://coinsnap.io/en/coinsnap-for-btcpaywall-payment-plugin/
+* WordPress: https://wordpress.org/plugins/coinsnap-paywall/
+* GitHub: https://github.com/Coinsnap/Coinsnap-Paywall
 
 == Bitcoin and Lightning payments in Coinsnap Bitcoin Paywall ==
 
@@ -82,7 +82,7 @@ If you want to use another BTCPay server as Payment provider, you need to know y
 
 == Installation ==
 
-### 1. Install the Coinsnap Bitcoin Paywall plug-in from the WordPress directory. ###
+= 1. Install the Coinsnap Bitcoin Paywall plug-in from the WordPress directory. =
 
 The Coinsnap Bitcoin Paywall can be searched and installed in the WordPress plugin directory.
 
@@ -94,7 +94,7 @@ Then click Install.
 After successful installation, click Activate and then you can start setting up the plugin.
 
 
-### 2. Connect Coinsnap account with Bitcoin Paywall ###
+= 2. Connect Coinsnap account with Bitcoin Paywall =
 
 After you have installed and activated the Coinsnap Bitcoin Paywall, you must make the Coinsnap settings. You can find these in the sidebar on the left under “Coinsnap Bitcoin Paywall”.
 
@@ -103,21 +103,21 @@ Simply enter your Coinsnap Store ID and your API key there; you can find these i
 If you don’t have a Coinsnap account yet, you can do so via the link shown: Coinsnap Registration
 
 
-### 3. Create Coinsnap account ####
+= 3. Create Coinsnap account =
 
-### 3.1. Create a Coinsnap Account ####
+= 3.1. Create a Coinsnap Account =
 
 Now go to the Coinsnap website at: https://app.coinsnap.io/register and open an account by entering your email address and a password of your choice.
 
 If you are using a Lightning Wallet with Lightning Login, then you can also open a Coinsnap account with it.
 
-### 3.2. Confirm email address ####
+= 3.2. Confirm email address =
 
 You will receive an email to the given email address with a confirmation link, which you have to confirm. If you do not find the email, please check your spam folder.
 
 Then please log in to the Coinsnap backend with the appropriate credentials.
 
-### 3.3. Set up website at Coinsnap ###
+= 3.3. Set up website at Coinsnap =
 
 After you sign up, you will be asked to provide two pieces of information.
 
@@ -133,14 +133,14 @@ https://coinsnap.io/lightning-wallet-mit-lightning-adresse/
 After saving settings you can use Store ID and Api Key on the step 2.
 
 
-### 4. Configure Coinsnap Bitcoin Paywall ####
+= 4. Configure Coinsnap Bitcoin Paywall =
 
-### 4.1. Create a paywall shortcode ###
+= 4.1. Create a paywall shortcode =
 
 Go to Coinsnap Bitcoin Paywall in the sideboard on the left in your WordPress and click on Paywall Shortcodes. Then click on “Add New Paywall Shortcode” at the top.
 
 
-### 4.2. configure your paywall shortcode ####
+== 4.2. configure your paywall shortcode ==
 
 In the window that now appears, make the following settings (see orange entries):
 
@@ -156,12 +156,12 @@ Now you can copy the shortcode at the bottom and use it in your content!
 
 
 
-### Upgrade Notice ###
+== Upgrade Notice ==
 
 Follow updates on plugin's GitHub page:
 https://github.com/Coinsnap/Bitcoin-Paywall
 
-### Frequently Asked Questions ###
+== Frequently Asked Questions ==
 
 Plugin's page on Coinsnap website: https://coinsnap.io/en/
 
@@ -181,11 +181,18 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 12. QR code
 
  
-# Changelog #
+== Changelog ==
 
 = 1.0.0 :: 2024-07-08 =
 * Initial release. 
 
-= 1.0.1 :: 2025-05-05 =
+= 1.1.0 :: 2025-01-23 =
+* Update: Gateway connection check is added
+
+= 1.2.0 :: 2025-07-14 =
+* Update: BTCPay and Coinsnap connection check is added on gateway change
+* Update: Added metadata field called type in the transaction
+* Update: Added support for Visual composer
+* Update: Added Coinsnap currencies support
 * Compatibility with Wordpress 6.8.1 is tested.
-* Updated frontend interface 
+

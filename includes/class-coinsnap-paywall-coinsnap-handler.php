@@ -20,7 +20,10 @@ class Coinsnap_Paywall_CoinsnapHandler {
 			'currency'              => $currency,
 			'redirectUrl'           => $redirectUrl,
 			'redirectAutomatically' => true,
-                        'referralCode' => COINSNAP_PAYWALL_REFERRAL_CODE
+			'referralCode'          => COINSNAP_PAYWALL_REFERRAL_CODE,
+			'metadata'              => [
+				'type' => 'Coinsnap Paywall',
+			]
 		] );
 
 		$response = wp_remote_post( "{$this->url}/api/v1/stores/" . $this->store_id . "/invoices", [
@@ -36,8 +39,8 @@ class Coinsnap_Paywall_CoinsnapHandler {
 
 		// Enhanced error handling
 		if ( is_wp_error( $response ) ) {
-                    //  Debug Invoice creation
-                    //error_log( 'Coinsnap Invoice Creation Error: ' . $response->get_error_message() );
+			//  Debug Invoice creation
+			//error_log( 'Coinsnap Invoice Creation Error: ' . $response->get_error_message() );
 
 			return [
 				'success' => false,
@@ -50,8 +53,8 @@ class Coinsnap_Paywall_CoinsnapHandler {
 
 		// Check HTTP status code
 		if ( $response_code !== 200 ) {
-                    //  Debug Invoice Creation HTTP
-                    //error_log( 'Coinsnap Invoice Creation HTTP Error: ' . $response_code . ' - ' . $body );
+			//  Debug Invoice Creation HTTP
+			//error_log( 'Coinsnap Invoice Creation HTTP Error: ' . $response_code . ' - ' . $body );
 
 			return [
 				'success' => false,
@@ -63,8 +66,8 @@ class Coinsnap_Paywall_CoinsnapHandler {
 		$decoded_body = json_decode( $body, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-                    //  Debug Invoice Creation JSON
-                    //error_log( 'BTCPay Invoice Creation JSON Decode Error: ' . json_last_error_msg() );
+			//  Debug Invoice Creation JSON
+			//error_log( 'BTCPay Invoice Creation JSON Decode Error: ' . json_last_error_msg() );
 
 			return [
 				'success'  => false,
@@ -84,7 +87,7 @@ class Coinsnap_Paywall_CoinsnapHandler {
 
 		// Set the request headers
 		$headers = [
-			'X-api-key'    => $this->api_key
+			'X-api-key' => $this->api_key
 		];
 
 		// Make the GET request to BTCPay API
@@ -104,6 +107,50 @@ class Coinsnap_Paywall_CoinsnapHandler {
 		// Check if the data is valid and return invoice status
 		if ( isset( $data['status'] ) ) {
 			return $data;
+		}
+	}
+
+	/**
+	 * Test connection to Coinsnap API
+	 * @return array
+	 */
+	public function testConnection() {
+		try {
+			$response = wp_remote_get( "{$this->url}/api/v1/stores/" . $this->store_id, [
+				'headers' => [
+					'x-api-key'    => $this->api_key,
+					'Content-Type' => 'application/json',
+				],
+			] );
+
+			// Check for WP errors
+			if ( is_wp_error( $response ) ) {
+				return [
+					'success' => false,
+					'message' => __('Connection to the Coinsnap failed: ','coinsnap-paywall') . $response->get_error_message()
+				];
+			}
+
+			// Check response code
+			$response_code = wp_remote_retrieve_response_code( $response );
+			if ( $response_code !== 200 ) {
+				return [
+					'success' => false,
+					'message' => __('Connection to the Coinsnap failed. HTTP Error: ','coinsnap-paywall')."{$response_code}"
+				];
+			}
+
+			// If we get here, connection is successful
+			return [
+				'success' => true,
+				'message' => __('Connection to the Coinsnap is successful!','coinsnap-paywall')
+			];
+
+		} catch ( Exception $e ) {
+			return [
+				'success' => false,
+				'message' => __('Connection error: ','coinsnap-paywall') . $e->getMessage()
+			];
 		}
 	}
 }
