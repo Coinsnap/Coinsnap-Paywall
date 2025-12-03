@@ -16,6 +16,9 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+if(!defined('COINSNAP_SERVER_URL')){define( 'COINSNAP_SERVER_URL', 'https://app.coinsnap.io' );}
+if(!defined('COINSNAP_API_PATH')){define( 'COINSNAP_API_PATH', '/api/v1/');}
+if(!defined('COINSNAP_SERVER_PATH')){define( 'COINSNAP_SERVER_PATH', 'stores' );}
 if ( ! defined( 'COINSNAP_PAYWALL_REFERRAL_CODE' ) ) {
 	define( 'COINSNAP_PAYWALL_REFERRAL_CODE', 'D72896' );
 }
