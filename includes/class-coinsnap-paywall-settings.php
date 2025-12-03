@@ -308,7 +308,9 @@ class Coinsnap_Paywall_Settings {
 			settings_fields( 'coinsnap_paywall' );
 
 			// Render the Provider Settings Section
+                        echo '<div id="coinsnap-settings-provider">';
 			$this->render_section( 'coinsnap_paywall_provider_section' );
+			echo '</div><div class="coinsnapConnectionStatus"></div>';
 
 			// Render Coinsnap Settings inside a wrapper
 			echo '<div id="coinsnap-settings-wrapper" class="provider-settings">';

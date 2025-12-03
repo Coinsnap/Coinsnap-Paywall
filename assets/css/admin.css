@@ -6,6 +6,10 @@
   background: #f9f9f9;
 }
 
+#coinsnap-settings-provider {
+    padding:10px;
+}
+
 .button.btcpay-apikey-link {margin:10px 0;}
 
 #check_connection_coinsnap_button,
@@ -21,5 +25,37 @@
 #check_connection_coinsnap_button:hover,
 #check_connection_btcpay_button:hover {
   background-color: #f1f1f1;
+}
+
+.coinsnapConnectionStatus{
+    font-size:1.3em;
+        font-weight: 600;
+        padding:10px;
+        margin-bottom:1em;
+}
+
+.coinsnapConnectionStatus span:before {
+    content:"";
+    border-radius: 50%;
+    display:inline-block;
+    vertical-align: baseline;
+    width:10px; height:10px;
+    margin:0 5px 0 0;
+}
+
+.coinsnapConnectionStatus span.error {
+    color: #d63638;
+}
+
+.coinsnapConnectionStatus span.error:before {
+    background:#d63638;
+}
+
+.coinsnapConnectionStatus span.success {
+    color: #00a32a;
+}
+
+.coinsnapConnectionStatus span.success:before {
+    background:#00a32a;
 }
 

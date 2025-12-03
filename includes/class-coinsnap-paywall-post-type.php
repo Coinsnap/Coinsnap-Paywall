@@ -22,17 +22,17 @@ class Coinsnap_Paywall_Shortcode_Metabox {
 	public function register_paywall_shortcode_post_type() {
 		register_post_type('paywall-shortcode', [
 			'labels' => [
-				'name'               => 'Paywall Shortcodes',
-				'singular_name'      => 'Paywall Shortcode',
-				'menu_name'          => 'Paywall Shortcodes',
-				'add_new'            => 'Add New',
-				'add_new_item'       => 'Add New Paywall Shortcode',
-				'edit_item'          => 'Edit Paywall Shortcode',
-				'new_item'           => 'New Paywall Shortcode',
-				'view_item'          => 'View Paywall Shortcode',
-				'search_items'       => 'Search Paywall Shortcodes',
-				'not_found'          => 'No paywall shortcodes found',
-				'not_found_in_trash' => 'No paywall shortcodes found in Trash',
+				'name'               => __('Paywall Shortcodes','coinsnap-paywall'),
+				'singular_name'      => __('Paywall Shortcode','coinsnap-paywall'),
+				'menu_name'          => __('Paywall Shortcodes','coinsnap-paywall'),
+				'add_new'            => __('Add New','coinsnap-paywall'),
+				'add_new_item'       => __('Add New Paywall Shortcode','coinsnap-paywall'),
+				'edit_item'          => __('Edit Paywall Shortcode','coinsnap-paywall'),
+				'new_item'           => __('New Paywall Shortcode','coinsnap-paywall'),
+				'view_item'          => __('View Paywall Shortcode','coinsnap-paywall'),
+				'search_items'       => __('Search Paywall Shortcodes','coinsnap-paywall'),
+				'not_found'          => __('No paywall shortcodes found','coinsnap-paywall'),
+				'not_found_in_trash' => __('No paywall shortcodes found in Trash','coinsnap-paywall'),
 			],
 			'public'             => false,
 			'publicly_queryable' => false,
@@ -70,6 +70,9 @@ class Coinsnap_Paywall_Shortcode_Metabox {
 		$duration = get_post_meta($post->ID, '_coinsnap_paywall_duration', true);
 		$theme = get_post_meta($post->ID, '_coinsnap_paywall_theme', true);
                 ?>
+
+        <div class="coinsnapConnectionStatus"></div>
+
       <table class="form-table">
         <tr>
           <th scope="row">

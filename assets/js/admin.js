@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(document).ready(function ($){
     
     if($('#provider').length){
         const providerSelector = $('#provider');
@@ -137,6 +137,50 @@ jQuery(document).ready(function ($) {
             return false;
         }
     }
+    
+    if($('#coinsnap_paywall_currency').length){
+        
+        setStep();
+        $('#coinsnap_paywall_currency').change(
+            function(){
+                setStep();
+            }    
+        );
+        
+    }
+    
+    if($('.coinsnapConnectionStatus').length){
+        
+        console.log('Connection check is activated');
+        
+        let ajaxurl = coinsnap_paywall_ajax.ajax_url;
+        let data = {
+            action: 'coinsnap_paywall_connection_handler',
+            apiNonce: coinsnap_paywall_ajax.nonce,
+            apiPost: coinsnap_paywall_ajax.post
+        };
+
+        jQuery.post( ajaxurl, data, function( response ){
+
+            connectionCheckResponse = $.parseJSON(response);
+            let resultClass = (connectionCheckResponse.result === true)? 'success' : 'error';
+            $('.coinsnapConnectionStatus').html('<span class="'+resultClass+'">'+ connectionCheckResponse.message +'</span>');
+            
+        });
+    }
+    
+    function setStep(){
+        let step = 0.01;
+        let currency = $('#coinsnap_paywall_currency').val();
+        if(currency === 'RUB' || currency === 'JPY' || currency === 'SATS'){
+            step = 1;
+        }
+        $('#coinsnap_paywall_price').attr('step', step);
+}
+    
 });
+  
+
+    
 
 

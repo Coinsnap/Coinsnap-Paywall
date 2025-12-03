@@ -14,13 +14,24 @@ class Coinsnap_Paywall_Scripts {
     //  wp_enqueue_script('coinsnap-paywall-admin-settings',plugin_dir_url( __FILE__ ) . '../assets/js/settings.js',[ 'jquery' ],COINSNAP_PAYWALL_VERSION,true);
 
         wp_enqueue_style('coinsnap-paywall-admin-style',plugin_dir_url( __FILE__ ) . '../assets/css/admin.css', [], COINSNAP_PAYWALL_VERSION );
-
-        if(filter_input(INPUT_GET,'page',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'coinsnap_paywall'){
+        $post_id = (filter_input(INPUT_GET,'post',FILTER_SANITIZE_FULL_SPECIAL_CHARS ))? filter_input(INPUT_GET,'post',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : '';
+        
+        $post_type = '';
+        if(filter_input(INPUT_GET,'post_type',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'paywall-shortcode'){
+            $post_type = filter_input(INPUT_GET,'post_type',FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        }
+        elseif($post_id > 0){
+            $post_data = get_post($post_id);
+            $post_type = $post_data->post_type;
+        }
+        
+        
+        if(filter_input(INPUT_GET,'page',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'coinsnap_paywall' || $post_type === 'paywall-shortcode'){
             wp_enqueue_script('coinsnap-paywall-admin-script', plugin_dir_url( __FILE__ ) . '../assets/js/admin.js', [ 'jquery' ], COINSNAP_PAYWALL_VERSION, true);
             wp_localize_script(
                 'coinsnap-paywall-admin-script',
                 'coinsnap_paywall_ajax',
-                ['ajax_url' => admin_url('admin-ajax.php'),'nonce' => wp_create_nonce( 'coinsnap-ajax-nonce')]
+                ['ajax_url' => admin_url('admin-ajax.php'),'nonce' => wp_create_nonce( 'coinsnap-ajax-nonce'),'post' => $post_id]
             );
 	}
     }

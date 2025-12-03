@@ -1,14 +1,14 @@
 <?php
 /*
- * Plugin Name:        Coinsnap Paywall
+ * Plugin Name:        Coinsnap Bitcoin Paywall
  * Plugin URI:         https://coinsnap.io
- * Description:        A plugin for Paywall using Coinsnap and BTCPay.
- * Version:            1.2.0
+ * Description:        A plugin for Paywall using Bitcoin and Lightning payments via Coinsnap and BTCPay payment gateways.
+ * Version:            1.3.0
  * Author:             Coinsnap
  * Author URI:         https://coinsnap.io/
  * Text Domain:        coinsnap-paywall
  * Domain Path:         /languages
- * Tested up to:        6.8
+ * Tested up to:        6.9
  * License:             GPL2
  * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -20,7 +20,7 @@ if ( ! defined( 'COINSNAP_PAYWALL_REFERRAL_CODE' ) ) {
 	define( 'COINSNAP_PAYWALL_REFERRAL_CODE', 'D72896' );
 }
 if ( ! defined( 'COINSNAP_PAYWALL_VERSION' ) ) {
-	define( 'COINSNAP_PAYWALL_VERSION', '1.2.0' );
+	define( 'COINSNAP_PAYWALL_VERSION', '1.3.0' );
 }
 if ( ! defined( 'COINSNAP_PAYWALL_PHP_VERSION' ) ) {
 	define( 'COINSNAP_PAYWALL_PHP_VERSION', '8.0' );
@@ -32,9 +32,17 @@ if(!defined('COINSNAP_CURRENCIES')){
 register_activation_hook( __FILE__, "coinsnap_paywall_activate" );
 register_uninstall_hook( __FILE__, 'coinsnap_paywall_uninstall' );
 add_action( 'admin_init', 'coinsnap_paywall_php_version' );
-add_action( 'init', 'start_custom_session', 1 );
+add_action( 'init', 'coinsnap_paywall_custom_session', 1 );
 
-function start_custom_session() {
+//  Elementor support in next version
+/*
+add_action( 'elementor/widgets/widgets_registered', function( $widgets_manager ) {
+    require_once __DIR__ . '/includes/class-coinsnap-paywall-elementor-widget.php';
+    $widgets_manager->register( new \Coinsnap_Paywall_Elementor_Widget() );
+});
+*/
+
+function coinsnap_paywall_custom_session() {
 	if ( session_status() === PHP_SESSION_NONE ) {
 		session_start();
 	}
@@ -91,36 +99,142 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-scri
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-shortcode.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-post-type.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-coinsnap-paywall-client.php';
 
 class CoinsnapPaywall {
 
-	public function __construct() {
+    public function __construct() {
 
-		// Register AJAX handlers for payment initiation
-		add_action( 'wp_ajax_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
-		add_action( 'wp_ajax_nopriv_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
+        // Register AJAX handlers for payment initiation
+        add_action( 'wp_ajax_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
+	add_action( 'wp_ajax_nopriv_coinsnap_create_invoice', [ $this, 'create_invoice' ] );
 
-		// Restrict content
-		//add_action( 'init', [$this, 'start_custom_session'], 1 );
-		add_filter( 'the_content', [ $this, 'restrict_page_content' ] );
+	// Restrict content
+	//add_action( 'init', [$this, 'start_custom_session'], 1 );
+	add_filter( 'the_content', [ $this, 'restrict_page_content' ] );
 
-		add_action( 'wp_ajax_check_invoice_status', [ $this, 'check_invoice_status' ] );
-		add_action( 'wp_ajax_nopriv_check_invoice_status', [ $this, 'check_invoice_status' ] );
-		add_action( 'wp_ajax_coinsnap_paywall_grant_access', [ $this, 'coinsnap_paywall_grant_access' ] );
-		add_action( 'wp_ajax_nopriv_coinsnap_paywall_grant_access', [ $this, 'coinsnap_paywall_grant_access' ] );
+	add_action( 'wp_ajax_check_invoice_status', [ $this, 'check_invoice_status' ] );
+	add_action( 'wp_ajax_nopriv_check_invoice_status', [ $this, 'check_invoice_status' ] );
+	add_action( 'wp_ajax_coinsnap_paywall_grant_access', [ $this, 'coinsnap_paywall_grant_access' ] );
+	add_action( 'wp_ajax_nopriv_coinsnap_paywall_grant_access', [ $this, 'coinsnap_paywall_grant_access' ] );
                 
-                
-                add_action('wp_ajax_coinsnap_paywall_btcpay_apiurl_handler', [$this, 'btcpayApiUrlHandler']);
-	}
+        add_action('wp_ajax_coinsnap_paywall_btcpay_apiurl_handler', [$this, 'btcpayApiUrlHandler']);
+        add_action('wp_ajax_coinsnap_paywall_connection_handler', [$this, 'coinsnapConnectionHandler']);
+    }
         
-        function btcpayApiUrlHandler(){
-            $_nonce = filter_input(INPUT_POST,'apiNonce',FILTER_SANITIZE_STRING);
+    public function coinsnapConnectionHandler(){
+        
+        $_nonce = filter_input(INPUT_POST,'apiNonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if ( !wp_verify_nonce( $_nonce, 'coinsnap-ajax-nonce' ) ) {
+            wp_die('Unauthorized!', '', ['response' => 401]);
+        }
+        
+        $response = [
+            'result' => false,
+            'message' => __('Empty gateway URL or API Key', 'coinsnap-paywall')
+        ];
+        
+        
+        $_provider = $this->getPaymentProvider();
+        $currency = ('' !== filter_input(INPUT_POST,'apiPost',FILTER_SANITIZE_FULL_SPECIAL_CHARS))? get_post_meta(filter_input(INPUT_POST,'apiPost',FILTER_SANITIZE_FULL_SPECIAL_CHARS), '_coinsnap_paywall_currency', true) : 'EUR';
+        $client = new Coinsnap_Paywall_Client();
+        
+        if($_provider === 'btcpay'){
+            try {
+                
+                $storePaymentMethods = $client->getStorePaymentMethods($this->getApiUrl(), $this->getApiKey(), $this->getStoreId());
+
+                if ($storePaymentMethods['code'] === 200) {
+                    if($storePaymentMethods['result']['onchain'] && !$storePaymentMethods['result']['lightning']){
+                        $checkInvoice = $client->checkPaymentData(0,$currency,'bitcoin','calculation');
+                    }
+                    elseif($storePaymentMethods['result']['lightning']){
+                        $checkInvoice = $client->checkPaymentData(0,$currency,'lightning','calculation');
+                    }
+                }
+            }
+            catch (\Exception $e) {
+                $response = [
+                        'result' => false,
+                        'message' => __('Coinsnap Bitcoin Voting: API connection is not established', 'coinsnap-paywall')
+                ];
+                $this->sendJsonResponse($response);
+            }
+        }
+        else {
+            $checkInvoice = $client->checkPaymentData(0,$currency,'coinsnap','calculation');
+        }
+        
+        if(isset($checkInvoice) && $checkInvoice['result']){
+            $connectionData = __('Min order amount is', 'coinsnap-paywall') .' '. $checkInvoice['min_value'].' '.$currency;
+        }
+        else {
+            $connectionData = __('No payment method is configured', 'coinsnap-paywall');
+        }
+        
+        $_message_disconnected = ($_provider !== 'btcpay')? 
+            __('Coinsnap Bitcoin Voting: Coinsnap server is disconnected', 'coinsnap-paywall') :
+            __('Coinsnap Bitcoin Voting: BTCPay server is disconnected', 'coinsnap-paywall');
+        $_message_connected = ($_provider !== 'btcpay')?
+            __('Coinsnap Bitcoin Voting: Coinsnap server is connected', 'coinsnap-paywall') : 
+            __('Coinsnap Bitcoin Voting: BTCPay server is connected', 'coinsnap-paywall');
+        
+        if( wp_verify_nonce($_nonce,'coinsnap-ajax-nonce') ){
+            $response = ['result' => false,'message' => $_message_disconnected];
+
+            try {
+                $this_store = $client->getStore($this->getApiUrl(), $this->getApiKey(), $this->getStoreId());
+                
+                if ($this_store['code'] !== 200) {
+                    $this->sendJsonResponse($response);
+                }
+                
+                else {
+                    $response = ['result' => true,'message' => $_message_connected.' ('.$connectionData.')'];
+                    $this->sendJsonResponse($response);
+                }
+            }
+            catch (\Exception $e) {
+                $response['message'] =  __('Coinsnap Bitcoin Voting: API connection is not established', 'coinsnap-paywall');
+            }
+
+            $this->sendJsonResponse($response);
+        }            
+    }
+    
+    public function sendJsonResponse(array $response): void {
+        echo wp_json_encode($response);
+        exit();
+    }
+        
+    private function getPaymentProvider() {
+        $coinsnap_paywall_data = get_option('coinsnap_paywall_options', []);
+        return ($coinsnap_paywall_data['provider'] === 'btcpay')? 'btcpay' : 'coinsnap';
+    }
+
+    private function getApiKey() {
+        $coinsnap_paywall_data = get_option('coinsnap_paywall_options', []);
+        return ($this->getPaymentProvider() === 'btcpay')? $coinsnap_paywall_data['btcpay_api_key']  : $coinsnap_paywall_data['coinsnap_api_key'];
+    }
+    
+    private function getStoreId() {
+	$coinsnap_paywall_data = get_option('coinsnap_paywall_options', []);
+        return ($this->getPaymentProvider() === 'btcpay')? $coinsnap_paywall_data['btcpay_store_id'] : $coinsnap_paywall_data['coinsnap_store_id'];
+    }
+    
+    public function getApiUrl() {
+        $coinsnap_paywall_data = get_option('coinsnap_paywall_options', []);
+        return ($this->getPaymentProvider() === 'btcpay')? $coinsnap_paywall_data['btcpay_url'] : COINSNAP_SERVER_URL;
+    }
+    
+    function btcpayApiUrlHandler(){
+            $_nonce = filter_input(INPUT_POST,'apiNonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             if ( !wp_verify_nonce( $_nonce, 'coinsnap-ajax-nonce' ) ) {
                 wp_die('Unauthorized!', '', ['response' => 401]);
             }
 
             if ( current_user_can( 'manage_options' ) ) {
-                $host = filter_var(filter_input(INPUT_POST,'host',FILTER_SANITIZE_STRING), FILTER_VALIDATE_URL);
+                $host = filter_var(filter_input(INPUT_POST,'host',FILTER_SANITIZE_FULL_SPECIAL_CHARS), FILTER_VALIDATE_URL);
 
                 if ($host === false || (substr( $host, 0, 7 ) !== "http://" && substr( $host, 0, 8 ) !== "https://")) {
                     wp_send_json_error("Error validating BTCPayServer URL.");
@@ -415,26 +529,6 @@ if(!function_exists('coinsnap_settings_update')){
         }
         
         update_option($option,$form_data);
-    }
-}
-
-if(!function_exists('remoteRequest')){
-    function remoteRequest(string $method,string $url,array $headers = [],string $body = ''){
-
-        $wpRemoteArgs = ['body' => $body, 'method' => $method, 'timeout' => 5, 'headers' => $headers];
-        $response = wp_remote_request($url,$wpRemoteArgs);
-
-        if(is_wp_error($response) ) {
-            $errorMessage = $response->get_error_message();
-            $errorCode = $response->get_error_code();
-            return array('error' => ['code' => (int)esc_html($errorCode), 'message' => esc_html($errorMessage)]);
-        }
-        elseif(is_array($response)) {
-            $status = $response['response']['code'];
-            $responseHeaders = wp_remote_retrieve_headers($response)->getAll();
-            $responseBody = json_decode($response['body'],true);
-            return array('status' => $status, 'body' => $responseBody, 'headers' => $responseHeaders);
-        }
     }
 }
 

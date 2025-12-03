@@ -1,12 +1,12 @@
-=== Coinsnap Paywall ===
+=== Coinsnap Bitcoin Paywall ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
-Tested up to: 6.8
-Stable tag: 1.2.0
+Tested up to: 6.9
+Stable tag: 1.3.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
+Offer pay-per-text, -video/audio, -digital goods with a Coinsnap Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
 
 == Description ==
 
@@ -14,8 +14,8 @@ The [Coinsnap](https://coinsnap.io/en/) Bitcoin Paywall protects your high-quali
 
 It allows you to build up a sustainable source of income and be less dependent on advertising revenue or sponsors. With your Coinsnap Bitcoin paywall, you can target loyal users who are willing to pay, which leads to a high-quality community in the long term.
 
-* Coinsnap Bitcoin Paywall Demo Site: https://btcpaywall.com/en/
-* Blog Article: https://coinsnap.io/en/coinsnap-for-btcpaywall-payment-plugin/
+* Coinsnap Bitcoin Paywall Demo Site: https://btcpaywall.com/
+* Blog Article: https://coinsnap.io/modules/bitcoin-paywall-plugin/
 * WordPress: https://wordpress.org/plugins/coinsnap-paywall/
 * GitHub: https://github.com/Coinsnap/Coinsnap-Paywall
 
@@ -171,7 +171,7 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 2. Coinsnap Paywall plugin from Github page installation
 3. Plugin installation via the “Upload Plugin” function
 4. Coinsnap account to Coinsnap Paywall connection
-5. BTCPay account to Coinsnap Paywall connection
+5. BTCPay account to Coinsnap Bitcoin Paywall connection
 6. Paywall shortcode generation
 7. Paywall shortcode configuration
 8. Registration in Cooinsnap*
@@ -196,3 +196,7 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 * Update: Added Coinsnap currencies support
 * Compatibility with Wordpress 6.8.1 is tested.
 
+= 1.3.0 :: 2025-12-03 =
+* Update: Minimum order amount is added to connection status notice in backend.
+* Update: Plugin is renamed to "Coinsnap Bitcoin Paywall"
+* Compatibility with Wordpress 6.9 is tested.
