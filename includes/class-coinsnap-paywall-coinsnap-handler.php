@@ -22,7 +22,7 @@ class Coinsnap_Paywall_CoinsnapHandler {
 			'redirectAutomatically' => true,
 			'referralCode'          => COINSNAP_PAYWALL_REFERRAL_CODE,
 			'metadata'              => [
-				'type' => 'Coinsnap Paywall',
+				'type' => 'Coinsnap Bitcoin Paywall',
 			]
 		] );
 

@@ -2,7 +2,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
 Tested up to: 6.9
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,7 +48,7 @@ If you want to use another BTCPay server as Payment provider, you need to know y
 * **Only 1 % fees!**:
     * No basic fee, no transaction fee, only 1% on the invoice amount with referrer code.
     * Without referrer code the fee is 1.25%.
-    * Get a referrer code from our [partners](https://coinsnap.io/en/partner/) and customers and save 0.25% fee.
+    * Get a referrer code from our [partners](https://coinsnap.io/partner/) and customers and save 0.25% fee.
 
 * **No KYC needed**:
     * Direct, P2P payments (instantly to your Lightning wallet)
@@ -75,9 +75,9 @@ If you want to use another BTCPay server as Payment provider, you need to know y
 = Documentation: =
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
-* [Frequently Asked Questions](https://coinsnap.io/en/faq/) 
-* [Terms and Conditions](https://coinsnap.io/en/general-terms-and-conditions/)
-* [Privacy Policy](https://coinsnap.io/en/privacy/)
+* [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/) 
+* [Terms and Conditions](https://coinsnap.io/info/general-terms-and-conditions/)
+* [Privacy Policy](https://coinsnap.io/info/privacy-policy/)
 
 
 == Installation ==
@@ -167,10 +167,10 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 
 == Screenshots ==
 
-1. Coinsnap paywall plugin with plugin search installation
-2. Coinsnap Paywall plugin from Github page installation
+1. Coinsnap Bitcoin paywall plugin with plugin search installation
+2. Coinsnap Bitcoin Paywall plugin from Github page installation
 3. Plugin installation via the “Upload Plugin” function
-4. Coinsnap account to Coinsnap Paywall connection
+4. Coinsnap account to Coinsnap Bitcoin Paywall connection
 5. BTCPay account to Coinsnap Bitcoin Paywall connection
 6. Paywall shortcode generation
 7. Paywall shortcode configuration
@@ -196,7 +196,10 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 * Update: Added Coinsnap currencies support
 * Compatibility with Wordpress 6.8.1 is tested.
 
-= 1.3.0 :: 2025-12-03 =
+= 1.3.0 :: 2025-12-02 =
 * Update: Minimum order amount is added to connection status notice in backend.
 * Update: Plugin is renamed to "Coinsnap Bitcoin Paywall"
+
+= 1.3.1 :: 2025-12-03 =
+* Plugin menu update
 * Compatibility with Wordpress 6.9 is tested.

@@ -3,7 +3,7 @@
  * Plugin Name:        Coinsnap Bitcoin Paywall
  * Plugin URI:         https://coinsnap.io
  * Description:        A plugin for Paywall using Bitcoin and Lightning payments via Coinsnap and BTCPay payment gateways.
- * Version:            1.3.0
+ * Version:            1.3.1
  * Author:             Coinsnap
  * Author URI:         https://coinsnap.io/
  * Text Domain:        coinsnap-paywall
@@ -20,7 +20,7 @@ if ( ! defined( 'COINSNAP_PAYWALL_REFERRAL_CODE' ) ) {
 	define( 'COINSNAP_PAYWALL_REFERRAL_CODE', 'D72896' );
 }
 if ( ! defined( 'COINSNAP_PAYWALL_VERSION' ) ) {
-	define( 'COINSNAP_PAYWALL_VERSION', '1.3.0' );
+	define( 'COINSNAP_PAYWALL_VERSION', '1.3.1' );
 }
 if ( ! defined( 'COINSNAP_PAYWALL_PHP_VERSION' ) ) {
 	define( 'COINSNAP_PAYWALL_PHP_VERSION', '8.0' );

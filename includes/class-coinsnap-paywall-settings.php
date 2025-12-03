@@ -247,17 +247,28 @@ class Coinsnap_Paywall_Settings {
 		echo esc_html_e( 'Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'coinsnap-paywall' );
 	}
 
-	public function add_menu_page() {
-		// Add a top-level menu page for Coinsnap Paywall
-		add_menu_page(
-			'Coinsnap Paywall',
-			'Coinsnap Paywall',
-			'manage_options',
-			'coinsnap_paywall',
-			[ $this, 'settings_page_html' ],
+    public function add_menu_page() {
+        // Add a top-level menu page for Coinsnap Bitcoin Paywall
+        add_menu_page(
+            'Coinsnap Bitcoin Paywall',
+            'Coinsnap Bitcoin Paywall',
+            'manage_options',
+            'coinsnap_paywall',
+            [ $this, 'settings_page_html' ],
 			'dashicons-lock',
 			100
 		);
+                
+        add_submenu_page(
+            'coinsnap_paywall',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'coinsnap_paywall',
+            [$this, 'settings_page_html']
+        );
+
+        
 
 		// Add the Paywall Shortcodes submenu
 		add_submenu_page(
@@ -301,10 +312,10 @@ class Coinsnap_Paywall_Settings {
 	public function settings_page_html() {
 		?>
       <div class="wrap">
-        <h1><?php esc_html_e( 'Coinsnap Paywall Settings', 'coinsnap-paywall' ); ?></h1>
+        <h1><?php esc_html_e( 'Coinsnap Bitcoin Paywall Settings', 'coinsnap-paywall' ); ?></h1>
         <form method="post" action="options.php">
 			<?php
-			// Render the settings fields for the Coinsnap Paywall
+			// Render the settings fields for the Coinsnap Bitcoin Paywall
 			settings_fields( 'coinsnap_paywall' );
 
 			// Render the Provider Settings Section
