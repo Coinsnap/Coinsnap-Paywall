@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-  const container = $('.paywall');
+  const container = $('.cscp-wrap');
   const postId = container.data('post-id');
   const duration = container.data('duration');
   const cookie = getCookie('coinsnap_initiated_' + postId) ;
@@ -11,14 +11,14 @@ jQuery(document).ready(function ($) {
     const data = JSON.parse(dataString);
     id = data.invoice_id;
 
-    if (data.post_id = postId) {
+    if (String(data.post_id) === String(postId)) {
       checkInvoiceStatus(id, postId, duration, false)
     }
   }
 
-  $('.paywall-payment-button').on('click', function (e) {
+  $('.cscp-pay-btn').on('click', function (e) {
     e.preventDefault();
-    const container = $(this).closest('.paywall');
+    const container = $(this).closest('.cscp-wrap');
     const price = container.data('price');
     const currency = container.data('currency');
     const postId = container.data('post-id');
@@ -68,7 +68,7 @@ jQuery(document).ready(function ($) {
           grantAccess(postId, duration);
         } else if (response.success && response.data.status === 'New' && redirect) {
 
-          window.location.href = response.data.checkoutLink;
+          window.location.href = response.data.checkoutUrl;
         }
       },
       error: function (xhr, status, error) {
@@ -87,9 +87,13 @@ jQuery(document).ready(function ($) {
         post_id: postId,
         duration: duration,
       },
-      success: function () {
-        deleteCookie('coinsnap_initiated_' + postId);
-        window.location.reload();
+      success: function (response) {
+        if (response.success) {
+          deleteCookie('coinsnap_initiated_' + postId);
+          window.location.reload();
+        } else {
+          alert('Failed to grant access: ' + (response.data || ''));
+        }
       },
       error: function (xhr) {
         alert('Failed to grant access');

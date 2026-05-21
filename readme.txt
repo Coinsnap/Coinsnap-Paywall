@@ -1,12 +1,12 @@
 === Coinsnap Bitcoin Paywall ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 1.3.1
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Offer pay-per-text, -video/audio, -digital goods with a Coinsnap Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
+Offer pay-per-text, -video/audio, -digital goods with a Coinsnap Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats to your wallet
 
 == Description ==
 

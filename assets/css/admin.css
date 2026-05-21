@@ -59,3 +59,39 @@
     background:#00a32a;
 }
 
+/* ==========================================================================
+   Extend coinsnap-core csc-field-row to cover number inputs and textareas
+   ========================================================================== */
+.csc-field-row input[type="number"],
+.csc-field-row textarea {
+	width: 100%;
+	max-width: 100%;
+	padding: 10px 12px;
+	font-size: 14px;
+	line-height: 1.5;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	background: #fff;
+	color: #2c3338;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	box-sizing: border-box;
+}
+
+.csc-field-row input[type="number"]:focus,
+.csc-field-row textarea:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.csc-field-row textarea {
+	resize: vertical;
+	min-height: 80px;
+	font-family: inherit;
+}
+
+/* Metabox title bar is redundant when using csc-card headers — hide it */
+#coinsnap_paywall_shortcode_details > .postbox-header .hndle {
+	display: none;
+}
+

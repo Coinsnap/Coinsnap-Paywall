@@ -33,22 +33,42 @@ class Coinsnap_Paywall_Shortcode {
 		// Start output buffering
 		ob_start();
 		?>
-      <div class="paywall <?php echo esc_attr($theme); ?>"
-           data-price="<?php echo esc_attr($price); ?>"
-           data-currency="<?php echo esc_attr($currency); ?>"
-           data-duration="<?php echo esc_attr($duration); ?>"
-           data-post-id="<?php echo esc_html(get_the_ID()); ?>">
-        <h2><?php echo esc_html($shortcode_post->post_title); ?></h2>
-        <p><?php echo esc_html($description); ?></p>
-        <div class="price-display">
-			<?php echo esc_html($price) . ' ' . esc_html($currency); ?>
-        </div>
-        <button class="paywall-payment-button"><?php echo esc_html($button_text); ?></button>
-      </div>
-    <p class="restricted <?php echo esc_attr($theme); ?>">
-        <?php echo esc_html_e('This content is restricted. Please complete payment to access.','coinsnap-paywall')?>
-    </p>
+		<div class="cscp-wrap cscp-theme-<?php echo esc_attr( $theme ); ?>"
+		     data-price="<?php echo esc_attr( $price ); ?>"
+		     data-currency="<?php echo esc_attr( $currency ); ?>"
+		     data-duration="<?php echo esc_attr( $duration ); ?>"
+		     data-post-id="<?php echo esc_attr( get_the_ID() ); ?>">
 
+			<div class="cscp-icon" aria-hidden="true">&#8383;</div>
+
+			<h2 class="cscp-title"><?php echo esc_html( $shortcode_post->post_title ); ?></h2>
+
+			<?php if ( $description ) : ?>
+				<p class="cscp-description"><?php echo esc_html( $description ); ?></p>
+			<?php endif; ?>
+
+			<div class="cscp-price-bar">
+				<span class="cscp-price-label"><?php esc_html_e( 'Price', 'coinsnap-paywall' ); ?></span>
+				<span class="cscp-price-value"><?php echo esc_html( $price . ' ' . $currency ); ?></span>
+			</div>
+
+			<p class="cscp-access-info">
+				<?php
+				printf(
+					/* translators: %s: number of hours */
+					esc_html__( 'Access granted for %s hours after payment.', 'coinsnap-paywall' ),
+					esc_html( $duration )
+				);
+				?>
+			</p>
+
+			<button class="cscp-pay-btn"><?php echo esc_html( $button_text ); ?></button>
+		</div>
+
+		<div class="cscp-locked-notice">
+			<span class="cscp-locked-icon" aria-hidden="true">&#128274;</span>
+			<p><?php esc_html_e( 'This content is restricted. Please complete payment to access.', 'coinsnap-paywall' ); ?></p>
+		</div>
 		<?php
 		return ob_get_clean();
 	}

@@ -1,0 +1,57 @@
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# IDE / editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+.buildpath
+nbproject/
+
+# PHP / Composer
+vendor/
+composer.phar
+composer.lock
+
+# Node (in case tooling gets added later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build / dist artifacts
+build/
+dist/
+*.zip
+*.tar.gz
+
+# Logs
+*.log
+logs/
+coinsnap-logs/
+
+# Testing / coverage
+.phpunit.result.cache
+coverage/
+.phpunit.cache/
+tests/tmp/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# WordPress specific
+wp-config.php
+/wp-content/uploads/
+/wp-content/cache/

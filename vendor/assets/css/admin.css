@@ -1,0 +1,1066 @@
+/**
+ * Coinsnap Core - Admin Styles
+ */
+
+/* =============================================
+   Settings Page - Modern Card Layout
+   ============================================= */
+
+/* Page wrapper */
+.coinsnap-core-admin {
+  max-width: 800px;
+  margin: 0;
+}
+
+.coinsnap-core-admin *,
+.coinsnap-core-admin *::before,
+.coinsnap-core-admin *::after {
+  box-sizing: border-box;
+}
+
+/* Page header */
+.csc-settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 20px 0 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 800px;
+}
+
+.csc-settings-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.csc-settings-header h1 {
+  font-size: 23px;
+  font-weight: 600;
+  color: #1d2327;
+  margin: 0;
+  padding: 0;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.csc-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.csc-header-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.csc-settings-subtitle {
+  font-size: 13px;
+  color: #757575;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Connection status badge */
+.csc-connection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  background: #f0f0f1;
+  color: #50575e;
+  margin-top: 4px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.csc-connection-badge .csc-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #a7aaad;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.csc-connection-badge.is-connected {
+  background: #edfcf2;
+  color: #0a5c1f;
+}
+
+.csc-connection-badge.is-connected .csc-status-dot {
+  background: #00a32a;
+  box-shadow: 0 0 0 3px rgba(0, 163, 42, 0.15);
+}
+
+.csc-connection-badge.is-error {
+  background: #fcf0f1;
+  color: #8a1116;
+}
+
+.csc-connection-badge.is-error .csc-status-dot {
+  background: #d63638;
+  box-shadow: 0 0 0 3px rgba(214, 54, 56, 0.15);
+}
+
+/* Legacy connection status - keep for AJAX updates */
+.coinsnapConnectionStatus {
+  display: none;
+}
+
+/* Card component */
+.csc-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  max-width: 800px;
+}
+
+.csc-card-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f0f0f1;
+}
+
+.csc-card-header h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2327;
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.csc-card-header p.description {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #757575;
+  font-style: normal;
+}
+
+.csc-card-body {
+  padding: 24px;
+}
+
+/* Provider toggle tabs */
+.csc-provider-toggle {
+  display: flex;
+  background: #f0f0f1;
+  border-radius: 6px;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 0;
+}
+
+.csc-provider-toggle label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #50575e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  user-select: none;
+  border: 1px solid transparent;
+  background: transparent;
+  line-height: 1.4;
+}
+
+.csc-provider-toggle label:hover {
+  color: #1d2327;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.csc-provider-toggle input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.csc-provider-toggle input[type="radio"]:checked + label,
+.csc-provider-toggle label.is-active {
+  background: #fff;
+  color: #1d2327;
+  border-color: #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.csc-provider-toggle input[type="radio"]:focus-visible + label {
+  outline: 2px solid #2271b1;
+  outline-offset: -2px;
+}
+
+.csc-provider-icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.csc-provider-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Provider settings containers */
+.csc-provider-panel {
+  display: none;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f1;
+  animation: csc-fadeIn 0.25s ease;
+}
+
+.csc-provider-panel.is-active {
+  display: block;
+}
+
+@keyframes csc-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form field rows within cards */
+.csc-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f1;
+}
+
+.csc-field-row:first-child {
+  padding-top: 0;
+}
+
+.csc-field-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.csc-field-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d2327;
+  line-height: 1.4;
+}
+
+.csc-field-row .csc-field-description {
+  font-size: 12px;
+  color: #757575;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.csc-field-row input[type="text"],
+.csc-field-row input[type="url"],
+.csc-field-row input[type="password"],
+.csc-field-row input[type="number"],
+.csc-field-row select {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 0;
+  height: auto;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  background: #fff;
+  color: #2c3338;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.csc-field-row input[type="text"]:focus,
+.csc-field-row input[type="url"]:focus,
+.csc-field-row input[type="password"]:focus,
+.csc-field-row input[type="number"]:focus,
+.csc-field-row select:focus {
+  border-color: #2271b1;
+  box-shadow: 0 0 0 1px #2271b1;
+  outline: none;
+}
+
+.csc-field-row input[type="text"]::placeholder,
+.csc-field-row input[type="url"]::placeholder,
+.csc-field-row input[type="password"]::placeholder {
+  color: #a7aaad;
+}
+
+.csc-field-row select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z' fill='%2350575e'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* Hide native spinners on number inputs so they match text inputs */
+.csc-field-row input[type="number"]::-webkit-outer-spin-button,
+.csc-field-row input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.csc-field-row input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* BTCPay Generate API Key button */
+.csc-generate-key-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.csc-generate-key-wrapper input[type="url"] {
+  flex: 1;
+  min-width: 200px;
+}
+
+.csc-btn-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #fff;
+  background: #2271b1;
+  border: 1px solid #2271b1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.csc-btn-generate:hover {
+  background: #135e96;
+  border-color: #135e96;
+  color: #fff;
+}
+
+.csc-btn-generate:focus-visible {
+  outline: 2px solid #2271b1;
+  outline-offset: 2px;
+}
+
+.csc-btn-generate svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* Advanced card - compact variant for single-field cards */
+.csc-card--compact .csc-card-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.csc-card--compact .csc-card-body {
+  padding-top: 8px;
+}
+
+.csc-card--compact .csc-field-row {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.csc-card--compact .csc-field-row select,
+.csc-card--compact .csc-field-row input[type="number"] {
+  max-width: 240px;
+}
+
+/* Footer links */
+.csc-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 0 4px;
+  margin-top: 4px;
+}
+
+.csc-footer-links a {
+  font-size: 12px;
+  color: #757575;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.csc-footer-links a:hover {
+  color: #2271b1;
+}
+
+.csc-footer-links .csc-sep {
+  color: #c3c4c7;
+  font-size: 12px;
+  user-select: none;
+}
+
+/* Tab navigation â€” reusable across all plugin pages */
+.csc-tabs {
+  display: flex;
+  background: #f0f0f1;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.csc-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #50575e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: center;
+  line-height: 1.4;
+  user-select: none;
+}
+
+.csc-tab:hover {
+  color: #1d2327;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.csc-tab:focus {
+  color: #1d2327;
+  box-shadow: none;
+  outline: none;
+}
+
+.csc-tab.is-active {
+  background: #fff;
+  color: #1d2327;
+  border-color: #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Tab content panels */
+.csc-tab-content {
+  display: none;
+}
+
+.csc-tab-content.is-active {
+  display: block;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f1;
+  animation: csc-fadeIn 0.25s ease;
+}
+
+/* Form fields inside cards â€” reusable field row layout */
+.csc-form-fields .csc-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f1;
+}
+
+.csc-form-fields .csc-field-row:first-child {
+  padding-top: 0;
+}
+
+.csc-form-fields .csc-field-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.csc-form-fields .csc-field-row > label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d2327;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Checkbox rows â€” inline layout */
+.csc-form-fields .csc-field-row:has(.csc-field-input > input[type="checkbox"]) {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.csc-form-fields .csc-field-row:has(.csc-field-input > input[type="checkbox"]) > label {
+  cursor: pointer;
+}
+
+/* Form field inputs inside cards */
+.csc-field-input input[type="text"],
+.csc-field-input input[type="url"],
+.csc-field-input select,
+.csc-field-input textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  background: #fff;
+  color: #2c3338;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.csc-field-input input[type="text"]:focus,
+.csc-field-input input[type="url"]:focus,
+.csc-field-input select:focus,
+.csc-field-input textarea:focus {
+  border-color: #2271b1;
+  box-shadow: 0 0 0 1px #2271b1;
+  outline: none;
+}
+
+.csc-field-input select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z' fill='%2350575e'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.csc-field-input input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.csc-field-input .description {
+  font-size: 12px;
+  color: #757575;
+  margin: 4px 0 0;
+  line-height: 1.5;
+  font-style: normal;
+}
+
+@media (max-width: 600px) {
+  .csc-tabs {
+    flex-direction: column;
+  }
+}
+
+/* Sticky save button area */
+.csc-save-bar {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin-top: 20px;
+  max-width: 800px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+}
+
+.csc-save-bar .button-primary {
+  padding: 8px 28px;
+  height: auto;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  border-radius: 4px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.csc-save-bar .csc-save-hint {
+  font-size: 13px;
+  color: #757575;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.csc-save-bar .csc-save-hint svg {
+  width: 16px;
+  height: 16px;
+  color: #c3c4c7;
+  flex-shrink: 0;
+}
+
+/* Save confirmation toast */
+.csc-toast {
+  position: fixed;
+  top: 40px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  background: #fff;
+  color: #0a5c1f;
+  border: 1px solid #b8e6c8;
+  border-left: 4px solid #00a32a;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 100001;
+  animation: csc-toast-in 0.35s ease, csc-toast-out 0.4s ease 2.5s forwards;
+  pointer-events: none;
+}
+
+.csc-toast svg {
+  color: #00a32a;
+  flex-shrink: 0;
+}
+
+@keyframes csc-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes csc-toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+
+/* Admin notices override for settings page */
+.coinsnap-core-admin .notice {
+  margin: 0 0 16px;
+  border-radius: 4px;
+}
+
+/* Legacy styles kept for non-settings pages */
+.csc-admin-page {
+  max-width: 1200px;
+}
+
+.csc-admin-page h1 {
+  color: #1d2327;
+  margin-bottom: 20px;
+}
+
+/* Legacy h2 styling for non-settings admin pages */
+.coinsnap-core-admin:not(.csc-settings-page) h2 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.coinsnap-core-admin:not(.csc-settings-page) .description {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* Hide WordPress default form-table inside cards - use custom field rows */
+.csc-settings-page .form-table {
+  display: none;
+}
+
+/* Transactions Page */
+.csc-transactions-filters {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.csc-transactions-filters .alignleft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.csc-transactions-filters select,
+.csc-transactions-filters input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* Transaction Status */
+.csc-status {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.csc-status-paid {
+  background: #d4edda;
+  color: #155724;
+}
+
+.csc-status-unpaid {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.csc-status-failed {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.csc-status-refunded {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Logs Page */
+.csc-logs-info {
+  background: #f1f1f1;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.csc-logs-info p {
+  margin: 5px 0;
+}
+
+.csc-logs-actions {
+  margin-bottom: 20px;
+}
+
+.csc-log-entries {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.csc-log-entry {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.csc-log-entry:last-child {
+  border-bottom: none;
+}
+
+.csc-log-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.csc-log-timestamp {
+  color: #666;
+}
+
+.csc-log-level {
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.csc-log-message {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Log Level Colors */
+.csc-log-emergency .csc-log-level {
+  background: #dc3545;
+  color: white;
+}
+
+.csc-log-alert .csc-log-level {
+  background: #fd7e14;
+  color: white;
+}
+
+.csc-log-critical .csc-log-level {
+  background: #dc3545;
+  color: white;
+}
+
+.csc-log-error .csc-log-level {
+  background: #dc3545;
+  color: white;
+}
+
+.csc-log-warning .csc-log-level {
+  background: #ffc107;
+  color: black;
+}
+
+.csc-log-notice .csc-log-level {
+  background: #17a2b8;
+  color: white;
+}
+
+.csc-log-info .csc-log-level {
+  background: #28a745;
+  color: white;
+}
+
+.csc-log-debug .csc-log-level {
+  background: #6c757d;
+  color: white;
+}
+
+.csc-log-unknown .csc-log-level {
+  background: #6c757d;
+  color: white;
+}
+
+/* Modal Styles */
+.csc-modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.csc-modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  border-radius: 4px;
+}
+
+.csc-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.csc-modal-close:hover {
+  color: #000;
+}
+
+/* Settings page responsive */
+@media (max-width: 600px) {
+  .csc-settings-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .csc-card-body {
+    padding: 16px;
+  }
+
+  .csc-card-header {
+    padding: 12px 16px;
+  }
+
+  .csc-provider-toggle {
+    flex-direction: column;
+  }
+
+  .csc-generate-key-wrapper {
+    flex-direction: column;
+  }
+
+  .csc-generate-key-wrapper input[type="url"] {
+    min-width: 100%;
+  }
+
+  .csc-save-bar {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .csc-save-bar .button-primary {
+    width: 100%;
+  }
+
+  .csc-footer-links {
+    flex-wrap: wrap;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .csc-transactions-filters .alignleft {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .csc-transactions-filters select,
+  .csc-transactions-filters input {
+    width: 100%;
+  }
+
+  .csc-modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 15px;
+  }
+}
+
+/* WordPress Admin Integration */
+.wp-admin .csc-admin-page .form-table th {
+  width: 200px;
+  padding: 20px 10px 20px 0;
+}
+
+.wp-admin .csc-admin-page .form-table td {
+  padding: 15px 10px;
+}
+
+.wp-admin .csc-admin-page .description {
+  font-style: italic;
+  color: #666;
+}
+
+/* Button Styles */
+.csc-admin-page .button {
+  margin-right: 5px;
+}
+
+.csc-admin-page .button-primary {
+  background: #0073aa;
+  border-color: #0073aa;
+}
+
+.csc-admin-page .button-primary:hover {
+  background: #005a87;
+  border-color: #005a87;
+}
+
+/* Notice Styles */
+.csc-admin-page .notice {
+  margin: 15px 0;
+}
+
+.csc-admin-page .notice-success {
+  border-left-color: #46b450;
+}
+
+.csc-admin-page .notice-error {
+  border-left-color: #dc3232;
+}
+
+.csc-admin-page .notice-warning {
+  border-left-color: #ffb900;
+}
+
+.csc-admin-page .notice-info {
+  border-left-color: #00a0d2;
+}
+
+/* --- Bitcoin Discount card ----------------------------------------- */
+
+.csc-discount-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.csc-discount-fields--hidden {
+  display: none;
+}
+
+#csc-discount-fields {
+  display: block;
+}
+
+.csc-field-row .csc-discount-select,
+.csc-field-row .csc-discount-value-input {
+  max-width: 240px;
+}
+
+.csc-discount-inline {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.csc-discount-inline__col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.csc-discount-inline__col label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d2327;
+  line-height: 1.4;
+}

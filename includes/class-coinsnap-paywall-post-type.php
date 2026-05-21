@@ -58,112 +58,135 @@ class Coinsnap_Paywall_Shortcode_Metabox {
 		);
 	}
 
-	public function render_paywall_shortcode_metabox($post) {
-		// Add nonce for security
-		wp_nonce_field('coinsnap_paywall_shortcode_nonce', 'coinsnap_paywall_shortcode_nonce');
+	public function render_paywall_shortcode_metabox( $post ) {
+		wp_nonce_field( 'coinsnap_paywall_shortcode_nonce', 'coinsnap_paywall_shortcode_nonce' );
 
-		// Retrieve existing meta values
-		$description = get_post_meta($post->ID, '_coinsnap_paywall_description', true);
-		$button_text = get_post_meta($post->ID, '_coinsnap_paywall_button_text', true);
-		$price = get_post_meta($post->ID, '_coinsnap_paywall_price', true);
-		$currency = get_post_meta($post->ID, '_coinsnap_paywall_currency', true);
-		$duration = get_post_meta($post->ID, '_coinsnap_paywall_duration', true);
-		$theme = get_post_meta($post->ID, '_coinsnap_paywall_theme', true);
-                ?>
+		$description       = get_post_meta( $post->ID, '_coinsnap_paywall_description', true );
+		$button_text       = get_post_meta( $post->ID, '_coinsnap_paywall_button_text', true );
+		$price             = get_post_meta( $post->ID, '_coinsnap_paywall_price', true );
+		$currency          = get_post_meta( $post->ID, '_coinsnap_paywall_currency', true );
+		$duration          = get_post_meta( $post->ID, '_coinsnap_paywall_duration', true );
+		$theme             = get_post_meta( $post->ID, '_coinsnap_paywall_theme', true );
+		$protected_content = get_post_meta( $post->ID, '_coinsnap_paywall_protected_content', true );
+		?>
+		<div class="coinsnap-core-admin">
 
-        <div class="coinsnapConnectionStatus"></div>
+			<!-- Paywall Settings card -->
+			<div class="csc-card">
+				<div class="csc-card-header">
+					<h2><?php esc_html_e( 'Paywall Settings', 'coinsnap-paywall' ); ?></h2>
+				</div>
+				<div class="csc-card-body">
 
-      <table class="form-table">
-        <tr>
-          <th scope="row">
-            <label for="coinsnap_paywall_description"><?php echo esc_html_e('Description','coinsnap-paywall')?></label>
-          </th>
-          <td>
-                    <textarea
-                        id="coinsnap_paywall_description"
-                        name="coinsnap_paywall_description"
-                        class="large-text"
-                        rows="4"
-                    ><?php echo esc_textarea($description); ?></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">
-            <label for="coinsnap_paywall_button_text"><?php echo esc_html_e('Button Text','coinsnap-paywall')?></label>
-          </th>
-          <td>
-            <input
-                type="text"
-                id="coinsnap_paywall_button_text"
-                name="coinsnap_paywall_button_text"
-                class="regular-text"
-                value="<?php echo esc_attr($button_text ?: 'Pay Now'); ?>"
-            >
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">
-            <label for="coinsnap_paywall_price"><?php echo esc_html_e('Price','coinsnap-paywall')?></label>
-          </th>
-          <td>
-            <input
-                type="number"
-                id="coinsnap_paywall_price"
-                name="coinsnap_paywall_price"
-                class="regular-text"
-                step="0.01"
-                min="0"
-                value="<?php echo esc_attr($price ?: '0'); ?>"
-            >
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">
-            <label for="coinsnap_paywall_currency"><?php echo esc_html_e('Currency','coinsnap-paywall')?></label>
-          </th>
-          <td>
-            <select id="coinsnap_paywall_currency" name="coinsnap_paywall_currency"><?php
-            foreach(COINSNAP_CURRENCIES as $coinsnap_currency){?>
-                <option value="<?php echo esc_html($coinsnap_currency);?>" <?php selected($currency, $coinsnap_currency); ?>><?php echo esc_html($coinsnap_currency);?></option>
-                <?php
-                }?>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">
-            <label for="coinsnap_paywall_duration"><?php echo esc_html_e('Duration (hours)','coinsnap-paywall')?></label>
-          </th>
-          <td>
-            <input
-                type="number"
-                id="coinsnap_paywall_duration"
-                name="coinsnap_paywall_duration"
-                class="regular-text"
-                min="1"
-                value="<?php echo esc_attr($duration ?: '24'); ?>"
-            >
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">
-            <label for="coinsnap_paywall_theme"><?php echo esc_html_e('Theme','coinsnap-paywall')?></label>
-          </th>
-          <td>
-            <select id="coinsnap_paywall_theme" name="coinsnap_paywall_theme">
-              <option value="light" <?php selected($theme, 'light'); ?>><?php echo esc_html_e('Light','coinsnap-paywall')?></option>
-              <option value="dark" <?php selected($theme, 'dark'); ?>><?php echo esc_html_e('Dark','coinsnap-paywall')?></option>
-            </select>
-          </td>
-        </tr>
-      </table>
+					<div class="csc-field-row">
+						<label for="coinsnap_paywall_description"><?php esc_html_e( 'Description', 'coinsnap-paywall' ); ?></label>
+						<textarea
+							id="coinsnap_paywall_description"
+							name="coinsnap_paywall_description"
+							rows="3"
+						><?php echo esc_textarea( $description ); ?></textarea>
+						<p class="csc-field-description"><?php esc_html_e( 'Shown on the frontend payment widget.', 'coinsnap-paywall' ); ?></p>
+					</div>
 
-      <!-- Shortcode Display -->
-      <div class="coinsnap-shortcode-display">
-        <h3><?php echo esc_html_e('Shortcode','coinsnap-paywall')?></h3>
-        <input type="text" class="large-text" readonly value='[paywall_payment id="<?php echo esc_html($post->ID); ?>"]'>
-        <p class="description"><?php echo esc_html_e('Use this shortcode to display the paywall on any page or post.','coinsnap-paywall')?></p>
-      </div>
+					<div class="csc-field-row">
+						<label for="coinsnap_paywall_button_text"><?php esc_html_e( 'Button Text', 'coinsnap-paywall' ); ?></label>
+						<input
+							type="text"
+							id="coinsnap_paywall_button_text"
+							name="coinsnap_paywall_button_text"
+							value="<?php echo esc_attr( $button_text ?: 'Pay Now' ); ?>"
+						/>
+					</div>
+
+					<div class="csc-field-row">
+						<label for="coinsnap_paywall_price"><?php esc_html_e( 'Price', 'coinsnap-paywall' ); ?></label>
+						<input
+							type="number"
+							id="coinsnap_paywall_price"
+							name="coinsnap_paywall_price"
+							step="0.01"
+							min="0"
+							value="<?php echo esc_attr( $price ?: '0' ); ?>"
+						/>
+					</div>
+
+					<div class="csc-field-row">
+						<label for="coinsnap_paywall_currency"><?php esc_html_e( 'Currency', 'coinsnap-paywall' ); ?></label>
+						<select id="coinsnap_paywall_currency" name="coinsnap_paywall_currency">
+							<?php foreach ( COINSNAP_CURRENCIES as $coinsnap_currency ) : ?>
+								<option value="<?php echo esc_attr( $coinsnap_currency ); ?>" <?php selected( $currency, $coinsnap_currency ); ?>>
+									<?php echo esc_html( $coinsnap_currency ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+
+					<div class="csc-field-row">
+						<label for="coinsnap_paywall_duration"><?php esc_html_e( 'Duration (hours)', 'coinsnap-paywall' ); ?></label>
+						<input
+							type="number"
+							id="coinsnap_paywall_duration"
+							name="coinsnap_paywall_duration"
+							min="1"
+							value="<?php echo esc_attr( $duration ?: '24' ); ?>"
+						/>
+						<p class="csc-field-description"><?php esc_html_e( 'How long the visitor has access after payment.', 'coinsnap-paywall' ); ?></p>
+					</div>
+
+					<div class="csc-field-row">
+						<label for="coinsnap_paywall_theme"><?php esc_html_e( 'Theme', 'coinsnap-paywall' ); ?></label>
+						<select id="coinsnap_paywall_theme" name="coinsnap_paywall_theme">
+						<option value="light" <?php selected( $theme, 'light' ); ?>><?php esc_html_e( 'Light', 'coinsnap-paywall' ); ?></option>
+						<option value="dark"  <?php selected( $theme, 'dark' );  ?>><?php esc_html_e( 'Dark',  'coinsnap-paywall' ); ?></option>
+						</select>
+					</div>
+
+				</div><!-- .csc-card-body -->
+			</div><!-- .csc-card -->
+
+			<!-- Protected Content card -->
+			<div class="csc-card">
+				<div class="csc-card-header">
+					<h2><?php esc_html_e( 'Protected Content', 'coinsnap-paywall' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'Revealed to the visitor after a successful payment.', 'coinsnap-paywall' ); ?></p>
+				</div>
+				<div class="csc-card-body">
+					<?php
+					wp_editor(
+						wp_kses_post( $protected_content ),
+						'coinsnap_paywall_protected_content',
+						[
+							'textarea_name' => 'coinsnap_paywall_protected_content',
+							'media_buttons' => true,
+							'teeny'         => false,
+							'textarea_rows' => 8,
+						]
+					);
+					?>
+				</div><!-- .csc-card-body -->
+			</div><!-- .csc-card -->
+
+			<!-- Shortcode card -->
+			<div class="csc-card">
+				<div class="csc-card-header">
+					<h2><?php esc_html_e( 'Shortcode', 'coinsnap-paywall' ); ?></h2>
+				</div>
+				<div class="csc-card-body">
+					<div class="csc-field-row">
+						<input
+							type="text"
+							class="large-text"
+							readonly
+							style="font-family:monospace;"
+							value='[paywall_payment id="<?php echo esc_attr( $post->ID ); ?>"]'
+							onclick="this.select();"
+						/>
+						<p class="csc-field-description"><?php esc_html_e( 'Paste this shortcode into any page or post to display the paywall.', 'coinsnap-paywall' ); ?></p>
+					</div>
+				</div><!-- .csc-card-body -->
+			</div><!-- .csc-card -->
+
+		</div><!-- .coinsnap-core-admin -->
 		<?php
 	}
 
@@ -217,6 +240,12 @@ class Coinsnap_Paywall_Shortcode_Metabox {
 
 				update_post_meta($post_id, '_' . $field, $value);
 			}
+		}
+
+		// Save protected content (allows HTML, sanitised with wp_kses_post).
+		$protected_content = filter_input( INPUT_POST, 'coinsnap_paywall_protected_content', FILTER_DEFAULT );
+		if ( $protected_content !== null ) {
+			update_post_meta( $post_id, '_coinsnap_paywall_protected_content', wp_kses_post( $protected_content ) );
 		}
 	}
 
