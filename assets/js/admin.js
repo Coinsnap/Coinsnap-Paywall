@@ -46,14 +46,14 @@ jQuery(document).ready(function ($){
             var connection = false;
       
             if (providerSelector.val() === 'coinsnap') {
-                const coinsnapStoreId = $('#coinsnap_store_id').val();
-                const coinsnapApiKey = $('#coinsnap_api_key').val();
+                const coinsnapStoreId = $('#csc-coinsnap-store-id, #coinsnap_store_id').first().val();
+                const coinsnapApiKey  = $('#csc-coinsnap-api-key, #coinsnap_api_key').first().val();
                 connection = await checkConnection(coinsnapStoreId, coinsnapApiKey);
             }
             else {
-                const btcpayStoreId = $('#btcpay_store_id').val();
-                const btcpayApiKey = $('#btcpay_api_key').val();
-                const btcpayUrl = $('#btcpay_url').val();
+                const btcpayStoreId = $('#csc-btcpay-store-id, #btcpay_store_id').first().val();
+                const btcpayApiKey  = $('#csc-btcpay-api-key, #btcpay_api_key').first().val();
+                const btcpayUrl     = $('[id$="_btcpay_url"], #btcpay_url').first().val();
                 connection = await checkConnection(btcpayStoreId, btcpayApiKey, btcpayUrl);
             }
     
@@ -64,9 +64,7 @@ jQuery(document).ready(function ($){
         }
 
         $('#submit').click(async function (event) {
-            
-            await handleCheckConnection();
-            $('#submit').click();
+            await handleCheckConnection(true);
         });
 
         checkConnectionCoisnanpButton.on('click', async (event) => { await handleCheckConnection(); })

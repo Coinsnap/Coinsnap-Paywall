@@ -290,8 +290,7 @@ class CoinsnapPaywall {
     }
     
     public function sendJsonResponse(array $response): void {
-        echo wp_json_encode($response);
-        exit();
+        wp_send_json( $response );
     }
         
     private function getPaymentProvider() {
