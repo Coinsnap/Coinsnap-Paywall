@@ -314,48 +314,57 @@ class CoinsnapPaywall {
         return ($this->getPaymentProvider() === 'btcpay')? ($coinsnap_paywall_data['btcpay_host'] ?? '') : COINSNAP_SERVER_URL;
     }
     
-    function btcpayApiUrlHandler(){
-            $_nonce = filter_input(INPUT_POST,'apiNonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            if ( !wp_verify_nonce( $_nonce, 'coinsnap-ajax-nonce' ) ) {
-                wp_die('Unauthorized!', '', ['response' => 401]);
+    function btcpayApiUrlHandler() {
+        $_nonce = filter_input( INPUT_POST, 'apiNonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if ( ! wp_verify_nonce( $_nonce, 'coinsnap-ajax-nonce' ) ) {
+            wp_die( 'Unauthorized!', '', array( 'response' => 401 ) );
+        }
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( 'Error processing Ajax request.' );
+        }
+
+        $host = filter_var( filter_input( INPUT_POST, 'host', FILTER_SANITIZE_FULL_SPECIAL_CHARS ), FILTER_VALIDATE_URL );
+
+        if ( false === $host || ( substr( $host, 0, 7 ) !== 'http://' && substr( $host, 0, 8 ) !== 'https://' ) ) {
+            wp_send_json_error( 'Error validating BTCPayServer URL.' );
+        }
+
+        $permissions = array_merge(
+            \CoinsnapCore\Auth\BTCPayAuthorizer::REQUIRED_PERMISSIONS,
+            \CoinsnapCore\Auth\BTCPayAuthorizer::OPTIONAL_PERMISSIONS
+        );
+
+        try {
+            // Determine redirect URL (popup mode when not on HTTPS and no ngrok tunnel).
+            $settings   = get_option( 'coinsnap_paywall_options', array() );
+            $popup_mode = false;
+            if ( ! empty( $settings['ngrok_url'] ) ) {
+                $redirect_url = rtrim( $settings['ngrok_url'], '/' ) . '/?paywall-btcpay-settings-callback';
+            } elseif ( is_ssl() ) {
+                $redirect_url = home_url( '/?paywall-btcpay-settings-callback' );
+            } else {
+                $redirect_url = home_url( '/?paywall-btcpay-settings-callback&popup=1' );
+                $popup_mode   = true;
             }
 
-            if ( current_user_can( 'manage_options' ) ) {
-                $host = filter_var(filter_input(INPUT_POST,'host',FILTER_SANITIZE_FULL_SPECIAL_CHARS), FILTER_VALIDATE_URL);
+            $url = \CoinsnapCore\Auth\BTCPayAuthorizer::get_authorize_url(
+                $host,
+                $permissions,
+                'CoinsnapPaywall',
+                true,
+                true,
+                $redirect_url,
+                null
+            );
 
-                if ($host === false || (substr( $host, 0, 7 ) !== "http://" && substr( $host, 0, 8 ) !== "https://")) {
-                    wp_send_json_error("Error validating BTCPayServer URL.");
-                }
+            // Store the host before we leave the site.
+            coinsnap_settings_update( 'coinsnap_paywall_options', array( 'btcpay_host' => $host ) );
 
-                $permissions = array_merge(
-                    \CoinsnapCore\Auth\BTCPayAuthorizer::REQUIRED_PERMISSIONS,
-                    \CoinsnapCore\Auth\BTCPayAuthorizer::OPTIONAL_PERMISSIONS
-                );
-
-                try {
-                    // Build the redirect URL using CoinsnapCore BTCPayAuthorizer.
-                    $url = \CoinsnapCore\Auth\BTCPayAuthorizer::get_authorize_url(
-                        $host,
-                        $permissions,
-                        'CoinsnapPaywall',
-                        true,
-                        true,
-                        home_url('?paywall-btcpay-settings-callback'),
-                        null
-                    );
-
-                    // Store the host before we leave the site.
-                    coinsnap_settings_update('coinsnap_paywall_options', ['btcpay_host' => $host]);
-
-                    // Return the redirect url.
-                    wp_send_json_success(['url' => $url]);
-                }
-
-                catch (\Throwable $e) {
-
-                }
-            }
-            wp_send_json_error("Error processing Ajax request.");
+            wp_send_json_success( array( 'url' => $url, 'popup' => $popup_mode ) );
+        } catch ( \Throwable $e ) {
+            wp_send_json_error( 'Error processing Ajax request.' );
+        }
     }
 
 	public function check_invoice_status() {
@@ -595,96 +604,132 @@ if(!function_exists('coinsnap_settings_update')){
     }
 }
 
-// Adding template redirect handling for paywall-btcpay-settings-callback.
-add_action( 'template_redirect', function(){
-    
+// Handle BTCPay callback: save credentials and (in popup mode) relay via postMessage.
+add_action( 'template_redirect', function () {
     global $wp_query;
-            
-    // Only continue on a paywall-btcpay-settings-callback request.    
-    if (!isset( $wp_query->query_vars['paywall-btcpay-settings-callback'])) {
+
+    if ( ! isset( $wp_query->query_vars['paywall-btcpay-settings-callback'] ) ) {
         return;
     }
 
-    $CoinsnapBTCPaySettingsUrl = admin_url('/admin.php?page=coinsnap_paywall');
+    $settings_url = admin_url( 'admin.php?page=coinsnap_paywall' );
+    $form_data    = get_option( 'coinsnap_paywall_options', array() );
+    $btcpay_host  = is_array( $form_data ) ? ( $form_data['btcpay_host'] ?? '' ) : '';
 
-            $rawData = file_get_contents('php://input');
-            $form_data = get_option( 'coinsnap_paywall_options', [] );
-            
-            $btcpay_server_url = $form_data['btcpay_host'] ?? '';
-            $btcpay_api_key  = filter_input(INPUT_POST,'apiKey',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $btcpay_api_key = filter_input( INPUT_POST, 'apiKey', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    if ( empty( $btcpay_api_key ) ) {
+        wp_safe_redirect( $settings_url );
+        exit();
+    }
 
-            $request_url = $btcpay_server_url.'/api/v1/stores';
-            $request_headers = ['Accept' => 'application/json','Content-Type' => 'application/json','Authorization' => 'token '.$btcpay_api_key];
-            $getstores = remoteRequest('GET',$request_url,$request_headers);
-            
-            if(!isset($getstores['error'])){
-                if (count($getstores['body']) < 1) {
-                    $messageAbort = __('Error on verifiying redirected API Key with stored BTCPay Server url. Aborting API wizard. Please try again or continue with manual setup.', 'coinsnap-paywall');
-                    //$notice->addNotice('error', $messageAbort);
-                    wp_safe_redirect( $CoinsnapBTCPaySettingsUrl );
-                    exit();
+    // phpcs:ignore WordPress.Security.NonceVerification.Missing -- BTCPay posts back without a WP nonce.
+    $btcpay_perms = isset( $_POST['permissions'] ) && is_array( $_POST['permissions'] )
+        ? array_map( 'sanitize_text_field', wp_unslash( $_POST['permissions'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        : array();
+
+    if ( empty( $btcpay_perms ) ) {
+        wp_safe_redirect( $settings_url );
+        exit();
+    }
+
+    $required = \CoinsnapCore\Auth\BTCPayAuthorizer::REQUIRED_PERMISSIONS;
+    $optional = \CoinsnapCore\Auth\BTCPayAuthorizer::OPTIONAL_PERMISSIONS;
+
+    $base_perms = array_reduce(
+        $btcpay_perms,
+        static function ( array $carry, string $p ) {
+            return array_merge( $carry, array( explode( ':', $p )[0] ) );
+        },
+        array()
+    );
+    $base_perms   = array_diff( $base_perms, $optional );
+    $has_required = empty(
+        array_merge(
+            array_diff( $required, $base_perms ),
+            array_diff( $base_perms, $required )
+        )
+    );
+
+    $has_single_store = true;
+    $store_id         = null;
+    foreach ( $btcpay_perms as $perm ) {
+        $parts = explode( ':', $perm );
+        if ( 2 !== count( $parts ) ) {
+            wp_safe_redirect( $settings_url );
+            exit();
+        }
+        $received = $parts[1] ?? null;
+        if ( null === $received ) {
+            $has_single_store = false;
+        }
+        if ( $store_id === $received ) {
+            continue;
+        }
+        if ( null === $store_id ) {
+            $store_id = $received;
+            continue;
+        }
+        $has_single_store = false;
+    }
+
+    $clean_api_key      = sanitize_text_field( $btcpay_api_key );
+    $store_id_from_perm = '';
+
+    if ( $has_single_store && $has_required ) {
+        $store_id_from_perm = explode( ':', $btcpay_perms[0] )[1] ?? '';
+
+        if ( empty( $store_id_from_perm ) && ! empty( $btcpay_host ) ) {
+            $response = wp_remote_get(
+                rtrim( $btcpay_host, '/' ) . '/api/v1/stores',
+                array(
+                    'headers' => array(
+                        'Authorization' => 'token ' . $clean_api_key,
+                        'Content-Type'  => 'application/json',
+                    ),
+                    'timeout' => 20,
+                )
+            );
+            if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) < 300 ) {
+                $stores = json_decode( wp_remote_retrieve_body( $response ), true );
+                if ( is_array( $stores ) && ! empty( $stores[0]['id'] ) ) {
+                    $store_id_from_perm = $stores[0]['id'];
                 }
             }
-                        
-            // Data does get submitted with url-encoded payload, so parse $_POST here.
-            if (!empty($_POST) || wp_verify_nonce(filter_input(INPUT_POST,'wp_nonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS),'-1')) {
-                $data['apiKey'] = filter_input(INPUT_POST,'apiKey',FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? null;
-                if(isset($_POST['permissions'])){
-                    $permissions = array_map('sanitize_text_field', wp_unslash($_POST['permissions']));
-                    if(is_array($permissions)){
-                        foreach ($permissions as $key => $value) {
-                            $data['permissions'][$key] = sanitize_text_field($permissions[$key] ?? null);
-                        }
-                    }
-                }
-            }
-    
-            if (isset($data['apiKey']) && isset($data['permissions'])) {
+        }
 
-                $REQUIRED_PERMISSIONS = \CoinsnapCore\Auth\BTCPayAuthorizer::REQUIRED_PERMISSIONS;
-                $OPTIONAL_PERMISSIONS = \CoinsnapCore\Auth\BTCPayAuthorizer::OPTIONAL_PERMISSIONS;
-                
-                $btcpay_server_permissions = $data['permissions'];
-                
-                $permissions = array_reduce($btcpay_server_permissions, static function (array $carry, string $permission) {
-			return array_merge($carry, [explode(':', $permission)[0]]);
-		}, []);
+        \CoinsnapCore\Auth\BTCPayAuthorizer::update_settings(
+            'coinsnap_paywall_options',
+            array(
+                'btcpay_api_key'   => $clean_api_key,
+                'btcpay_store_id'  => $store_id_from_perm,
+                'payment_provider' => 'btcpay',
+            )
+        );
+    }
 
-		// Remove optional permissions so that only required ones are left.
-		$permissions = array_diff($permissions, $OPTIONAL_PERMISSIONS);
+    // Popup mode: relay credentials back to the opener via postMessage then close.
+    $popup = filter_input( INPUT_GET, 'popup', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+    if ( '1' === $popup ) {
+        $js_data     = wp_json_encode( array(
+            'type'    => 'coinsnap_paywall_btcpay_auth',
+            'apiKey'  => $clean_api_key,
+            'storeId' => $store_id_from_perm,
+        ) );
+        $js_origin   = wp_json_encode( home_url() );
+        $js_fallback = wp_json_encode( $settings_url );
 
-		$hasRequiredPermissions = (empty(array_merge(array_diff($REQUIRED_PERMISSIONS, $permissions), array_diff($permissions, $REQUIRED_PERMISSIONS))))? true : false;
-                
-                $hasSingleStore = true;
-                $storeId = null;
-		foreach ($btcpay_server_permissions as $perms) {
-                    if (2 !== count($exploded = explode(':', $perms))) { return false; }
-                    if (null === ($receivedStoreId = $exploded[1])) { $hasSingleStore = false; }
-                    if ($storeId === $receivedStoreId) { continue; }
-                    if (null === $storeId) { $storeId = $receivedStoreId; continue; }
-                    $hasSingleStore = false;
-		}
-                
-                if ($hasSingleStore && $hasRequiredPermissions) {
+        header( 'Content-Type: text/html; charset=utf-8' );
+        echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authorizing...</title>';
+        echo '<script>(function(){';
+        echo 'var d=' . $js_data . ';'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo 'if(window.opener&&!window.opener.closed){';
+        echo 'window.opener.postMessage(d,' . $js_origin . ');'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo 'window.close();';
+        echo '}else{window.location.href=' . $js_fallback . ';}'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo '})();</script></head><body></body></html>';
+        exit();
+    }
 
-                    coinsnap_settings_update(
-                        'coinsnap_paywall_options',[
-                        'btcpay_api_key'      => $data['apiKey'],
-                        'btcpay_store_id'     => explode(':', $btcpay_server_permissions[0])[1],
-                        'payment_provider'    => 'btcpay',
-                        ]);
-                    
-                    wp_safe_redirect( $CoinsnapBTCPaySettingsUrl );
-                    exit();
-                }
-                else {
-                    //$notice->addNotice('error', __('Please make sure you only select one store on the BTCPay API authorization page.', 'coinsnap-paywall'));
-                    wp_safe_redirect( $CoinsnapBTCPaySettingsUrl );
-                    exit();
-                }
-            }
-
-    //$notice->addNotice('error', __('Error processing the data from Coinsnap. Please try again.', 'coinsnap-paywall'));
-    wp_safe_redirect( $CoinsnapBTCPaySettingsUrl );
+    wp_safe_redirect( $settings_url );
     exit();
-});
+} );
