@@ -2,27 +2,24 @@ jQuery(document).ready(function ($) {
   const container = $('.paywall');
   const postId = container.data('post-id');
   const duration = container.data('duration');
-  const cookie = getCookie('coinsnap_initiated_' + postId) ;
-  let id = false
+  const cookie = getCookie('coinsnap_initiated_' + postId);
+  let id = false;
 
   // Check if the initiated cookie has the post ID same as the current post
   if (cookie) {
-    const dataString = decodeURIComponent(cookie)
+    const dataString = decodeURIComponent(cookie);
     const data = JSON.parse(dataString);
     id = data.invoice_id;
 
-    if (data.post_id = postId) {
-      checkInvoiceStatus(id, postId, duration, false)
+    if (data.post_id === postId) {
+      checkInvoiceStatus(id, postId, duration, false);
     }
   }
 
   $('.paywall-payment-button').on('click', function (e) {
     e.preventDefault();
     const container = $(this).closest('.paywall');
-    const price = container.data('price');
-    const currency = container.data('currency');
     const postId = container.data('post-id');
-    const currentPage = window.location.href;
 
     if (id) {
       checkInvoiceStatus(id, postId, duration, true);
@@ -33,10 +30,7 @@ jQuery(document).ready(function ($) {
       method: 'POST',
       data: {
         action: 'coinsnap_create_invoice',
-        amount: price,
-        currency: currency,
         postId: postId,
-        currentPage: currentPage,
       },
       success: function (response) {
         if (response.success) {
@@ -85,9 +79,11 @@ jQuery(document).ready(function ($) {
       data: {
         action: 'coinsnap_paywall_grant_access',
         post_id: postId,
-        duration: duration,
       },
-      success: function () {
+      success: function (response) {
+        if (!response.success) {
+          return;
+        }
         deleteCookie('coinsnap_initiated_' + postId);
         window.location.reload();
       },

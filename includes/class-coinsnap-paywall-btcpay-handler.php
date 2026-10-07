@@ -100,12 +100,9 @@ class Coinsnap_Paywall_BTCPayHandler {
 
 		// Decode the response
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
-		wp_send_json_success( $data );
 
 		// Check if the data is valid and return invoice status
-		if ( isset( $data['status'] ) ) {
-			return $data;
-		}
+		return isset( $data['status'] ) ? $data : null;
 	}
 
 	/**

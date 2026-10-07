@@ -1,12 +1,12 @@
 === Coinsnap Bitcoin Paywall ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, Paywall, BTCPay
-Tested up to: 6.9
-Stable tag: 1.3.1
+Tested up to: 7.1
+Stable tag: 1.3.2
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Offer pay-per-text, -video/audio, -digital goods with a Coinsnap Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
+Offers pay-per-text, video/audio, digital goods with a Coinsnap Bitcoin paywall, instant access after sending BTC/Sats directly to your wallet
 
 == Description ==
 
@@ -203,3 +203,8 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 = 1.3.1 :: 2025-12-03 =
 * Plugin menu update
 * Compatibility with Wordpress 6.9 is tested.
+
+= 1.3.2 :: 2026-09-23 =
+* Fix: Paid access was stored with a numeric session ID, so one payment could unlock the content for other visitors. Existing access records are reset on update.
+* Security: Access is only granted after the payment is verified with the payment gateway.
+* Security: Price, currency and access duration are taken from the paywall settings instead of the browser.
