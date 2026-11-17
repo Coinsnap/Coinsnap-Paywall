@@ -75,7 +75,7 @@ class Coinsnap_Paywall_Settings {
 			'coinsnap_paywall_coinsnap_section',
 			[
 				'label_for' => 'coinsnap_api_key',
-				'type'      => 'text'
+				'type'      => 'secret'
 			]
 		);
 
@@ -134,7 +134,7 @@ class Coinsnap_Paywall_Settings {
 			'coinsnap_paywall_btcpay_section',
 			[
 				'label_for' => 'btcpay_api_key',
-				'type'      => 'text'
+				'type'      => 'secret'
 			]
 		);
 
@@ -172,6 +172,17 @@ class Coinsnap_Paywall_Settings {
 				echo '</select>';
 				break;
 
+			case 'secret':
+				// Never print a stored key. Show only its last 4 characters; an empty field keeps the stored key.
+				$hint = Coinsnap_Paywall_Security::secret_hint( (string) $field_value );
+				echo '<input type="password" 
+                id="' . esc_attr( $field_id ) . '" 
+                name="coinsnap_paywall_options[' . esc_attr( $field_id ) . ']" 
+                value="" autocomplete="new-password" 
+                placeholder="' . esc_attr( $hint !== '' ? $hint : __( 'Paste your API key', 'coinsnap-paywall' ) ) . '" 
+                class="regular-text">';
+				break;
+
 			case 'text':
 				echo '<input type="text" 
                 id="' . esc_attr( $field_id ) . '" 
@@ -186,7 +197,7 @@ class Coinsnap_Paywall_Settings {
                             
                         case 'check_connection':
                             $id = isset($args['id']) ? $args['id'] : 'check_connection';
-                            echo '<div >' . '<button id="' . esc_attr($id) . '_button">Check</button>' . '<span style="" id="' . esc_attr($id) .  '">' . '</span>' . '</div>';
+                            echo '<div >' . '<button type="button" class="button" id="' . esc_attr($id) . '_button">' . esc_html__('Check', 'coinsnap-paywall') . '</button>' . '<span style="" id="' . esc_attr($id) .  '">' . '</span>' . '</div>';
                         break;
             
 		}
@@ -201,37 +212,9 @@ class Coinsnap_Paywall_Settings {
 	}
 
 	public function sanitize_options( $options ) {
-		$sanitized = [];
-
-		if ( isset( $options['provider'] ) ) {
-			$sanitized['provider'] = sanitize_text_field( $options['provider'] );
-		}
-
-		if ( isset( $options['coinsnap_store_id'] ) ) {
-			$sanitized['coinsnap_store_id'] = sanitize_text_field( $options['coinsnap_store_id'] );
-		}
-
-		if ( isset( $options['coinsnap_api_key'] ) ) {
-			$sanitized['coinsnap_api_key'] = sanitize_text_field( $options['coinsnap_api_key'] );
-		}
-
-		if ( isset( $options['coinsnap_url'] ) ) {
-			$sanitized['coinsnap_url'] = esc_url_raw( $options['coinsnap_url'] );
-		}
-
-		if ( isset( $options['btcpay_store_id'] ) ) {
-			$sanitized['btcpay_store_id'] = sanitize_text_field( $options['btcpay_store_id'] );
-		}
-
-		if ( isset( $options['btcpay_api_key'] ) ) {
-			$sanitized['btcpay_api_key'] = sanitize_text_field( $options['btcpay_api_key'] );
-		}
-
-		if ( isset( $options['btcpay_url'] ) ) {
-			$sanitized['btcpay_url'] = esc_url_raw( $options['btcpay_url'] );
-		}
-
-		return $sanitized;
+		// Merge into the stored options: an empty key field keeps the stored key,
+		// and a new BTCPay URL without a new key drops the old key (guide 6.14).
+		return Coinsnap_Paywall_Security::merge_settings( (array) get_option( 'coinsnap_paywall_options', [] ), is_array( $options ) ? $options : [] );
 	}
 
 	// Optional section callbacks for additional descriptions
@@ -345,12 +328,21 @@ class Coinsnap_Paywall_Settings {
 
     //  Only show on the plugin settings page
         $screen = get_current_screen();
-        if ( $screen->id !== 'toplevel_page_coinsnap_paywall' ) {
+        if ( ! $screen || $screen->id !== 'toplevel_page_coinsnap_paywall' ) {
             return;
         }
 
     // Retrieve the connection test result
         $connection_result = get_option( 'coinsnap_paywall_connection_result' );
+
+        $btcpay_notice = get_transient( Coinsnap_Paywall_Security::NOTICE_KEY );
+        if ( is_string( $btcpay_notice ) ) {
+            delete_transient( Coinsnap_Paywall_Security::NOTICE_KEY );
+            $ok = $btcpay_notice === 'ok';
+            echo '<div class="notice ' . ( $ok ? 'notice-success' : 'notice-error' ) . ' is-dismissible"><p>' . esc_html( $ok
+                ? __( 'BTCPay Server is connected.', 'coinsnap-paywall' )
+                : __( 'BTCPay connection failed. The API key must be limited to one store with the requested permissions. Please try again.', 'coinsnap-paywall' ) ) . '</p></div>';
+        }
 
         if ( is_array($connection_result) ) {
             $class = $connection_result['success'] ? 'notice-success' : 'notice-error';
@@ -362,10 +354,7 @@ class Coinsnap_Paywall_Settings {
     }
 
     public function test_connection_on_save( $old_options, $new_options ) {
-        
-        
-        //print_R($new_options);
-        
+
         // Ensure we have a provider selected
         if ( ! isset( $new_options['provider'] ) ) {
             return;
@@ -407,11 +396,7 @@ class Coinsnap_Paywall_Settings {
             }
 	}
         catch ( Exception $e ) {
-            $connection_result['message'] = sprintf(
-                /* translators: 1: Connection test error */
-		__( 'Connection test error: %s', 'coinsnap-paywall' ),
-                $e->getMessage()
-            );
+            $connection_result['message'] = __( 'Connection test failed', 'coinsnap-paywall' );
         }
 
 	// Persist the connection result
@@ -419,4 +404,4 @@ class Coinsnap_Paywall_Settings {
     }
 }
 
-new Coinsnap_Paywall_Settings();
+$GLOBALS['coinsnap_paywall_settings'] = new Coinsnap_Paywall_Settings();

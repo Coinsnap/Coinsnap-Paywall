@@ -1,6 +1,5 @@
 <?php
 if (!defined('ABSPATH')){ exit; }
-header('Access-Control-Allow-Origin: *');
 class Coinsnap_Paywall_Client {
 
     public function remoteRequest(string $method,string $url,array $headers = [],string $body = ''){
@@ -126,7 +125,7 @@ class Coinsnap_Paywall_Client {
     
     public function getStore($storeURL,$apiKey,$storeId){
         
-        $url = $storeURL.COINSNAP_API_PATH.COINSNAP_SERVER_PATH.'/' . urlencode($storeId);
+        $url = $storeURL.COINSNAP_API_PATH.COINSNAP_SERVER_PATH.'/' . rawurlencode((string) $storeId);
         $headers = ['Accept' => 'application/json','Content-Type' => 'application/json','x-api-key' => $apiKey,'Authorization' => 'token '.$apiKey];
         $method = 'GET';
         $response = $this->remoteRequest($method, $url, $headers);
@@ -140,7 +139,7 @@ class Coinsnap_Paywall_Client {
             return array('code' => $response['status'], 'result' => $response['body']);
         }
         else {
-            return ['code' => $response['status'], 'result' => $response['body']];
+            return ['code' => $response['status'] ?? 0, 'result' => []];
         }
     }
     
@@ -150,7 +149,7 @@ class Coinsnap_Paywall_Client {
      */
     public function getStorePaymentMethods($storeURL,$apiKey,$storeId){
         
-        $url = $storeURL.COINSNAP_API_PATH.COINSNAP_SERVER_PATH.'/' . urlencode($storeId) . '/payment-methods';
+        $url = $storeURL.COINSNAP_API_PATH.COINSNAP_SERVER_PATH.'/' . rawurlencode((string) $storeId) . '/payment-methods';
         $headers = ['Accept' => 'application/json','Content-Type' => 'application/json','x-api-key' => $apiKey,'Authorization' => 'token '.$apiKey];
         $method = 'GET';
         $response = $this->remoteRequest($method, $url, $headers);
@@ -186,7 +185,7 @@ class Coinsnap_Paywall_Client {
             return array('code' => $response['status'], 'result' => $result);
         }
         else {
-            return ['code' => $response['status'], 'result' => $result];
+            return ['code' => $response['status'] ?? 0, 'result' => []];
         }
     }
 }

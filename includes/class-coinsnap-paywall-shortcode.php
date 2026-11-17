@@ -27,17 +27,13 @@ class Coinsnap_Paywall_Shortcode {
 		$button_text = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_button_text', true) ?: 'Pay Now';
 		$price = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_price', true) ?: '0';
 		$currency = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_currency', true) ?: 'SATS';
-		$duration = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_duration', true) ?: '24';
 		$theme = get_post_meta($shortcode_post->ID, '_coinsnap_paywall_theme', true) ?: 'light';
 
 		// Start output buffering
 		ob_start();
 		?>
       <div class="paywall <?php echo esc_attr($theme); ?>"
-           data-price="<?php echo esc_attr($price); ?>"
-           data-currency="<?php echo esc_attr($currency); ?>"
-           data-duration="<?php echo esc_attr($duration); ?>"
-           data-post-id="<?php echo esc_html(get_the_ID()); ?>">
+           data-post-id="<?php echo esc_attr((string) absint(get_the_ID())); ?>">
         <h2><?php echo esc_html($shortcode_post->post_title); ?></h2>
         <p><?php echo esc_html($description); ?></p>
         <div class="price-display">
