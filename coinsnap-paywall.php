@@ -113,6 +113,9 @@ class CoinsnapPaywall {
 
 	// Restrict content
 	add_filter( 'the_content', [ $this, 'restrict_page_content' ] );
+	// Automatic excerpts (REST API, RSS feeds, embeds, archives) are built from the raw content with the
+	// shortcode stripped, so the_content above never sees it. Build them from the teaser only.
+	add_filter( 'get_the_excerpt', [ $this, 'restrict_excerpt' ], 9, 2 );
 
         // Admin only (capability and nonce checked in the handlers).
         add_action('wp_ajax_coinsnap_paywall_btcpay_apiurl_handler', [$this, 'btcpayApiUrlHandler']);
@@ -331,6 +334,31 @@ class CoinsnapPaywall {
 		}
 		$has_access = Coinsnap_Paywall_Security::has_access( (int) get_the_ID() );
 		return $this->process_native_content( $content, $has_access );
+	}
+
+	/**
+	 * An automatic excerpt of a paywalled post uses only the text before the paywall,
+	 * unless the visitor has access. A hand-written excerpt is left as the author wrote it.
+	 */
+	public function restrict_excerpt( $excerpt, $post = null ) {
+		$post = get_post( $post );
+		if ( ! $post || trim( (string) $excerpt ) !== '' || post_password_required( $post ) ) {
+			return $excerpt;
+		}
+		$content = (string) $post->post_content;
+		$pos     = strpos( $content, '[paywall_payment' );
+		if ( $pos === false || Coinsnap_Paywall_Security::has_access( (int) $post->ID ) ) {
+			return $excerpt;
+		}
+		$teaser = excerpt_remove_blocks( strip_shortcodes( substr( $content, 0, $pos ) ) );
+		$teaser = wp_strip_all_tags( str_replace( ']]>', ']]&gt;', $teaser ) );
+		$more   = (string) apply_filters( 'excerpt_more', ' [&hellip;]' );
+		$teaser = wp_trim_words( $teaser, (int) apply_filters( 'excerpt_length', 55 ), $more );
+		// Never return an empty excerpt: wp_trim_excerpt() would then build it from the full content.
+		if ( trim( $teaser ) === '' ) {
+			$teaser = trim( wp_strip_all_tags( $more ) ) !== '' ? trim( $more ) : '&hellip;';
+		}
+		return $teaser;
 	}
 
 	private function process_native_content( $content, $has_access ) {
