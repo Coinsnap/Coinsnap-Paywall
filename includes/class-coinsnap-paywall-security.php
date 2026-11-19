@@ -315,12 +315,14 @@ class Coinsnap_Paywall_Security {
 			'amount'   => $amount,
 			'currency' => $paywall['currency'],
 			'orderId'  => $orderId,
-			'metadata' => [
+			// type, orderId, paywallId and postId are what a payment is matched by (confirm_invoice()); the rest
+			// is for the merchant, under the standard BTCPay/Coinsnap names. Visitors are anonymous: no personal data.
+			'metadata' => self::without_empty( [
 				'type'      => self::INVOICE_TYPE,
 				'orderId'   => $orderId,
 				'paywallId' => (string) $paywall['paywall_id'],
 				'postId'    => (string) $paywall['post_id'],
-			],
+			] + self::standard_metadata( $paywall, $amount ) ),
 		];
 		$redirect = (string) get_permalink( $paywall['post_id'] );
 		if ( $cfg['provider'] === 'btcpay' ) {
@@ -357,6 +359,52 @@ class Coinsnap_Paywall_Security {
 			return null;
 		}
 		return $inv['checkoutLink'];
+	}
+
+	/** What the unlock is for, as invoice metadata. Plain values; empty ones are left out. */
+	private static function standard_metadata( array $paywall, string $amount ): array {
+		$postTitle    = trim( (string) get_post_field( 'post_title', $paywall['post_id'], 'raw' ) );
+		$paywallTitle = trim( (string) get_post_field( 'post_title', $paywall['paywall_id'], 'raw' ) );
+		$itemDesc     = $postTitle !== '' ? sprintf( 'Access to: %s', $postTitle ) : 'Paywall access';
+		$itemCode     = 'paywall-' . $paywall['paywall_id'];
+		return [
+			'itemDesc'      => $itemDesc,
+			'itemCode'      => $itemCode,
+			'lineItems'     => [ [
+				'name'     => $itemDesc,
+				'sku'      => $itemCode,
+				'quantity' => 1,
+				'price'    => $amount,
+				'total'    => $amount,
+				'currency' => $paywall['currency'],
+			] ],
+			'postTitle'     => $postTitle,
+			'paywallTitle'  => $paywallTitle,
+			'pageUrl'       => (string) get_permalink( $paywall['post_id'] ),
+			'durationHours' => (int) $paywall['duration'],
+			'platform'      => 'wordpress',
+			'plugin'        => 'coinsnap-paywall',
+			'pluginVersion' => COINSNAP_PAYWALL_VERSION,
+			'language'      => (string) get_locale(),
+		];
+	}
+
+	/** Metadata without '' / null / empty arrays (also nested); a list stays a list. */
+	public static function without_empty( array $data ): array {
+		$isList = $data === [] || array_keys( $data ) === range( 0, count( $data ) - 1 );
+		$out    = [];
+		foreach ( $data as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$value = self::without_empty( $value );
+				if ( $value === [] ) {
+					continue;
+				}
+			} elseif ( $value === null || ( is_string( $value ) && trim( $value ) === '' ) || is_object( $value ) ) {
+				continue;
+			}
+			$out[ $key ] = $value;
+		}
+		return $isList ? array_values( $out ) : $out;
 	}
 
 	/* ---------------------------------------------------------------------
